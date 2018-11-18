@@ -1,9 +1,9 @@
 #include "city.h"
 #include "city_file.h"
 
-bool parse_custom(map_sts *m) {
+bool parseCustom(map_sts *m) {
     bool failed = true;
-    json_object *obj = json_tokener_parse(get_text());
+    json_object *obj = json_tokener_parse(getText());
     json_object_object_foreach(obj, key, val) {
         if (!strcmp(key, "id")) {
             strncpy(m->locn.id , json_object_get_string(val), MAX_ID_SIZE);

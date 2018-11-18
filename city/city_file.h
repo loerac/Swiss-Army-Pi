@@ -24,8 +24,8 @@ typedef struct file_info_s {
     file_status status;
 } file_info;
 
-bool file_process(const char *fname);
-const char *get_text();
-const file_status get_status();
+bool fileProcess(const char *fname);
+const char *getText();
+const file_status getStatus();
 
 #endif

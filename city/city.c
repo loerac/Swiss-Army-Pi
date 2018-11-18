@@ -31,12 +31,12 @@ static map_sts map = {
 bool cityInit( void ) {
     bool failed = true;
 
-    failed = file_process(CITY_CUSTOM);
+    failed = fileProcess(CITY_CUSTOM);
     if (failed) {
         goto exit;
     }
 
-    failed = parse_custom(&map);
+    failed = parseCustom(&map);
     if (failed) {
         goto exit;
     }

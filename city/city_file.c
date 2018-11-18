@@ -9,7 +9,7 @@ static file_info file = {
     .status = FILE_OK
 };
 
-bool file_destroy(file_info *f) {
+bool fileDestroy(file_info *f) {
     bool failed = true;
     if (fclose(f->in) != 0) {
         printf("Failed to close \'%s\': error(%s)\n", f->name, strerror(errno));
@@ -26,7 +26,7 @@ exit:
     return failed;
 }
 
-bool file_exist(file_info *f) {
+bool fileExist(file_info *f) {
     bool failed = true;
     if (access(f->name, F_OK) == -1) {
         printf("File \'%s\' not found: error(%s)\n", f->name, strerror(errno));
@@ -39,7 +39,7 @@ exit:
     return failed;
 }
 
-bool file_open(file_info *f) {
+bool fileOpen(file_info *f) {
     bool failed = true;
     if (!(f->in = fopen(f->name, "rb"))) {
         printf("Failed to open \'%s\': error(%s)\n", f->name, strerror(errno));
@@ -52,7 +52,7 @@ exit:
     return failed;
 }
 
-bool file_read(file_info *f) {
+bool fileRead(file_info *f) {
     bool failed = true;
     fseek(f->in, 0L, SEEK_END);
     f->size = ftell(f->in);
@@ -60,7 +60,7 @@ bool file_read(file_info *f) {
     f->text = malloc(f->size);
     if (fread(f->text, f->size, 1, f->in) != 1) {
         printf("Failed to read \'%s\': error(%s)\n", f->name, strerror(errno));
-        file_status sts = file_destroy(f);
+        file_status sts = fileDestroy(f);
         f->status = (sts != FILE_OK) ? sts:FILE_READ_ERROR;
         goto exit;
     }
@@ -70,7 +70,7 @@ exit:
     return failed;
 }
 
-bool file_process(const char *fname) {
+bool fileProcess(const char *fname) {
     bool failed = true;
     if ((fname != NULL) && (fname[0] == '\0')) {
         printf("No file given\n");
@@ -80,17 +80,17 @@ bool file_process(const char *fname) {
     }
 
     strncpy(file.name, fname, MAX_FILE_NAME_SIZE);
-    failed = file_exist(&file);
+    failed = fileExist(&file);
     if (failed) {
         goto process_exit;
     }
 
-    failed = file_open(&file);
+    failed = fileOpen(&file);
     if (failed) {
         goto process_exit;
     }
 
-    failed = file_read(&file);
+    failed = fileRead(&file);
     if (failed) {
         goto process_exit;
     }
@@ -106,10 +106,10 @@ exit:
     return failed;
 }
 
-const char *get_text( void ) {
+const char *getText( void ) {
     return file.text;
 }
 
-const file_status get_status( void ) {
+const file_status getStatus( void ) {
     return file.status;
 }

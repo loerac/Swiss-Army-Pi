@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "country": {
+      "type": "string"
+    },
+    "zipcode": {
+      "type": "integer"
+    },
+    "key": {
+      "type": "string"
+    },
+    "coord": {
+      "type": "object",
+      "properties": {
+        "lon": {
+          "type": "number"
+        },
+        "lat": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "lon",
+        "lat"
+      ]
+    }
+  },
+  "required": [
+    "key"
+  ]
+}

@@ -1,5 +1,10 @@
+#include <sys/wait.h>
+#include <sys/types.h>
+
 #include "city.h"
 #include "city_file.h"
+
+#define die(e) do { fprintf(stderr, "%s\n", e); exit(EXIT_FAILURE);  } while(0);
 
 static file_info file = {
     .in = NULL,
@@ -8,6 +13,64 @@ static file_info file = {
     .name = {'\0'},
     .status = FILE_OK
 };
+
+bool validateJSON(const char *json, const char *schema) {
+    pid_t pid;
+    int status;
+    int link[2];
+    bool failed = true;
+    char *arg[5] = {'\0'};
+    char valid[4096] = {'\0'};
+    
+    if (pipe(link) == -1) {
+        die("pipe");
+    } else if ((pid = fork()) == -1) {
+        die("fork");
+        printf("Forking error: error(%s)\n", strerror(errno));
+    } else if (pid == 0) {
+        dup2(link[1], STDERR_FILENO);
+        close(link[0]);
+        close(link[1]);
+        arg[0] = "/usr/bin/json";
+        arg[1] = "validate";
+        // FIXME: Values not being written
+        snprintf(arg[2], 64, "--schema-file=%s", schema);
+        snprintf(arg[3], 64, "--document-file=%s", json);
+        printf("arg[2]-----------%s\n", arg[2]);
+        printf("arg[3]-----------%s\n", arg[3]);
+        status = execv(arg[0], arg);
+        if (status == -1) {
+            printf("Error while validating JSON: error(%s)\n", strerror(errno));
+        }
+        die("execl");
+    } else {
+        /*if ((pid = waitpid(pid, &status, WNOHANG)) == -1) {
+            printf("Failed waitpid: error(%s)\n", strerror(errno));
+        } else {
+            do {
+                if (WIFEXITED(status)) {
+                    printf("Child exited with status of %d\n", WEXITSTATUS(status));
+                } else if (pid == 0) {
+                    sleep(1);
+                } else {
+                    printf("Child did not exit successfully\n");
+                }
+            } while (pid == 0);
+        }*/
+        close(link[1]);
+        int nbytes = read(link[0], valid, sizeof(valid));
+        printf("%s\n", valid);
+        if (nbytes == -1) {
+            printf("Error while reading STDERR_FILENO: error(%s)\n", strerror(errno));
+        } else if (valid[0] == '\0') {
+            failed = false;
+        } else {
+            printf("%s failed validation\n", json);
+        }
+    }
+
+    return failed;
+}
 
 bool fileDestroy(file_info *f) {
     bool failed = true;
@@ -70,16 +133,21 @@ exit:
     return failed;
 }
 
-bool fileProcess(const char *fname) {
+bool fileProcess(const char *json, const char *schema) {
     bool failed = true;
-    if ((fname != NULL) && (fname[0] == '\0')) {
+    if ((json != NULL) && (json[0] == '\0')) {
         printf("No file given\n");
         strncpy(file.name, "(null)", MAX_FILE_NAME_SIZE);
         file.status = FILE_NULL_PTR;
         goto process_exit;
     }
 
-    strncpy(file.name, fname, MAX_FILE_NAME_SIZE);
+    strncpy(file.name, json, MAX_FILE_NAME_SIZE);
+    failed = validateJSON(file.name, schema);
+    if (failed) {
+        goto process_exit;
+    }
+
     failed = fileExist(&file);
     if (failed) {
         goto process_exit;

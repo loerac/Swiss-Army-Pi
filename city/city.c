@@ -4,6 +4,7 @@
 #include "city_parse.h"
 
 #define CITY_CUSTOM "data/city.json"
+#define CITY_SCHEMA "data/city_schema.json"
 
 static map_sts map = {
     .sun = {
@@ -31,7 +32,7 @@ static map_sts map = {
 bool cityInit( void ) {
     bool failed = true;
 
-    failed = fileProcess(CITY_CUSTOM);
+    failed = fileProcess(CITY_CUSTOM, CITY_SCHEMA);
     if (failed) {
         goto exit;
     }

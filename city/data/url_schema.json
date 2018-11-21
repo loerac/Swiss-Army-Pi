@@ -1,0 +1,53 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "units",
+    "language",
+    "key",
+    "url"
+  ],
+  "properties": {
+    "units": {
+      "$id": "#/properties/units",
+      "type": "integer",
+      "title": "The Units Schema",
+      "default": 0,
+      "examples": [
+        0
+      ]
+    },
+    "language": {
+      "$id": "#/properties/language",
+      "type": "string",
+      "title": "The Language Schema",
+      "default": "",
+      "examples": [
+        "en"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "key": {
+      "$id": "#/properties/key",
+      "type": "integer",
+      "title": "The Key Schema",
+      "default": 0,
+      "examples": [
+        0
+      ]
+    },
+    "url": {
+      "$id": "#/properties/url",
+      "type": "string",
+      "title": "The Url Schema",
+      "default": "",
+      "examples": [
+        ""
+      ],
+      "pattern": "^(.*)$"
+    }
+  }
+}

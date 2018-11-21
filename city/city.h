@@ -12,7 +12,7 @@
 #define MAX_ZIPCODE_SIZE    16U
 #define MAX_LATITUDE_SIZE   10U
 #define MAX_LONGITUDE_SIZE  12U
-#define MAX_CITY_NAME       32U
+#define MAX_CITY_NAME       128U
 #define MAX_COUNTRY_CODE    2U
 #define MAX_KEY_SIZE        32U
 

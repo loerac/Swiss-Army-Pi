@@ -1,11 +1,12 @@
 CC=gcc
+TARGET=city
 CFLAGS=-Wall -Werror
-SOURCE=$(wildcard *.c)
-OBJECT=$(patsubst %.c, %.o, %(SOURCE))
+SOURCES=$(wildcard *.c)
+OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
 LIBS=-ljson-c -lcurl
 
-city: city.o city_curl.o city_file.o city_parse.o
-	$(CC) -o city city.o city_curl.o city_file.o city_parse.o $(LIBS)
+all: $(OBJECTS) 
+	$(CC) -o $(TARGET) $(OBJECTS) $(LIBS)
 
 clean:
-	rm -rf city *.o
+	rm -rf $(TARGET) city.o city_curl.o city_file.o city_parse.o

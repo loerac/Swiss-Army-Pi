@@ -32,7 +32,7 @@
     },
     "key": {
       "$id": "#/properties/key",
-      "type": "integer",
+      "type": "string",
       "title": "The Key Schema",
       "default": 0,
       "examples": [

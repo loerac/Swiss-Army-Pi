@@ -3,7 +3,6 @@
   "name": "Milwaukee",
   "country": "US",
   "zipcode": 53209,
-  "key": "0",
   "coord": {
     "lon": -87.906471,
     "lat": 43.038898

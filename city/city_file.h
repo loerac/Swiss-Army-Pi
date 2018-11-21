@@ -25,7 +25,6 @@ typedef struct file_info_s {
 } file_info;
 
 bool fileProcess(const char *json, const char *schema);
-const char *getText();
-const file_status getStatus();
+const file_info getFileInfo( void );
 
 #endif

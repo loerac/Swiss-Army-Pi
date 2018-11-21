@@ -174,10 +174,6 @@ exit:
     return failed;
 }
 
-const char *getText( void ) {
-    return file.text;
-}
-
-const file_status getStatus( void ) {
-    return file.status;
+const file_info getFileInfo( void ) {
+    return file;
 }

@@ -7,6 +7,7 @@
 #define MAX_UNIT_FORMAT     16U
 #define MAX_LANG_SIZE       12U
 #define MAX_CITY_NAME       256U
+#define MAX_COUNTRY_NAME    256U
 #define MAX_ID              16U
 #define MAX_LAT_LON         12U
 #define MAX_ZIPCODE         16U
@@ -20,7 +21,7 @@
 
 #define MAX_BASE_PAR        64U
 
-typedef struct unit_format_e {
+typedef enum unit_format_e {
     STANDARD = 0,
     METRIC,
     IMPERIAL
@@ -32,8 +33,10 @@ typedef struct url_sts_s {
     char u_string[MAX_UNIT_FORMAT];
     char lang[MAX_LANG_SIZE];
     char city[MAX_CITY_NAME];
+    char country[MAX_COUNTRY_NAME];
     char id[MAX_ID];
-    char lat_log[MAX_LAT_LON];
+    char lon[MAX_LAT_LON];
+    char lat[MAX_LAT_LON];
     char zip[MAX_ZIPCODE];
 } url_sts;
 

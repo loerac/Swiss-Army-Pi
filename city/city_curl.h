@@ -1,11 +1,10 @@
 #ifndef _CITY_CURLH_
 #define _CITY_CURLH_
 
-#define WEATHER_URL     "api.openweathermap.org/data/2.5/weather?"
-#define WEATHER_KEY     "&appid="
+#include <stdbool.h>
+#include <curl/curl.h>
 
 #include "city.h"
-#include <curl/curl.h>
 
 typedef enum get_city_by_s{
     GET_BY_ID = 0,
@@ -15,10 +14,13 @@ typedef enum get_city_by_s{
     GET_FAILED
 } get_city_by;
 
-void destroyData();
-bool curlCityInfo();
-void setCitySts(map_sts m);
-const size_t getCitySize();
-const char *getCityData();
+typedef struct city_info_s {
+    size_t size;
+    char *data;
+} city_info;
+
+void destroyCity( void );
+bool weatherURL(const url_sts *url);
+const city_info getCityInfo( void );
 
 #endif

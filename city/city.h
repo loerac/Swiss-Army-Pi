@@ -22,15 +22,15 @@
 #define MAX_BASE_PAR        64U
 
 typedef enum unit_format_e {
-    STANDARD = 0,
+    IMPERIAL = 0,
     METRIC,
-    IMPERIAL
+    KELVIN
 } unit_format;
 
 typedef struct url_sts_s {
     char key[MAX_KEY_SIZE + 1];
-    unit_format u_format;
-    char u_string[MAX_UNIT_FORMAT];
+    char s_format[MAX_UNIT_FORMAT];
+    unit_format e_format;
     char lang[MAX_LANG_SIZE];
     char city[MAX_CITY_NAME];
     char country[MAX_COUNTRY_NAME];

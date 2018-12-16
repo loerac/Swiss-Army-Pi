@@ -4,14 +4,32 @@
 #include <json-c/json.h>
 
 #include "city.h"
+#include "city_curl.h"
 #include "city_parse.h"
 
-void jsonCoordURL(json_object *jb, url_sts *u) {
-    json_object_object_foreach(jb, key, val) {
+void jsonUnitURL(url_sts *u) {
+    switch (u->e_format) {
+    case IMPERIAL:
+        strncpy(u->s_format, "imperial", MAX_UNIT_FORMAT);
+        break;
+    case METRIC:
+        strncpy(u->s_format, "metric", MAX_UNIT_FORMAT);
+        break;
+    case KELVIN:
+        strncpy(u->s_format, "kelvin", MAX_UNIT_FORMAT);
+        break;
+    }
+}
+
+void jsonCoordURL(json_object *jb, url_sts *u, const char *k) {
+    json_object *new_obj = json_object_object_get(jb, k);
+    json_object_object_foreach(new_obj, key, val) {
         if (strncmp(key, "lon", sizeof("lon")) == 0) {
             strncpy(u->lon, json_object_get_string(val), MAX_LAT_LON);
         } else if (strncmp(key, "lat", sizeof("lat")) == 0) {
             strncpy(u->lat, json_object_get_string(val), MAX_LAT_LON);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -42,16 +60,19 @@ bool parseCustom(url_sts *u) {
             } else if (strncmp(key, "language", sizeof("lang")) == 0) {
                 strncpy(u->lang, json_object_get_string(val), MAX_LANG_SIZE);
             } else if (strncmp(key, "units", sizeof("units")) == 0) {
-                u->u_format = json_object_get_int(val);
-            } else if (strncmp(key, "url", sizeof("url")) == 0) {
-                strncpy(u->u_string, json_object_get_string(val), MAX_UNIT_FORMAT);
+                u->e_format = json_object_get_int(val);
+                jsonUnitURL(u);
             } else if (strncmp(key, "coord", sizeof("coord")) == 0) {
-                jsonCoordURL(obj, u);
+                jsonCoordURL(obj, u, key);
+            } else {
+                printf("Key not found: key(%s)\n", key);
+                goto exit;
             }
         }
         failed = false;
     }
 
+exit:
     return failed;
 }
 
@@ -61,20 +82,8 @@ void jsonCoord(json_object *jb, city_map *m) {
             m->coord.lon = (float)json_object_get_double(val);
         } else if (strncmp(key, "lat", sizeof("lat")) == 0) {
             m->coord.lat = (float)json_object_get_double(val);
-        }
-    }
-}
-
-void jsonWeather(json_object *jb, city_map *m) {
-    json_object_object_foreach(jb, key, val) {
-        if (strncmp(key, "id", sizeof("id")) == 0) {
-            m->weather.id = json_object_get_int(val);
-        } else if (strncmp(key, "main", sizeof("main")) == 0) {
-            strncpy(m->weather.main, json_object_get_string(val), MAX_WEATHER_PAR);
-        } else if (strncmp(key, "description", sizeof("descpription")) == 0) {
-            strncpy(m->weather.desc, json_object_get_string(val), MAX_WEATHER_DESC);
-        } else if (strncmp(key, "icon", sizeof("icon")) == 0) {
-            strncpy(m->weather.icon, json_object_get_string(val), MAX_ICON_ID);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -95,6 +104,25 @@ void jsonMain(json_object *jb, city_map *m) {
             m->main.sea_level = (float)json_object_get_double(val);
         } else if (strncmp(key, "grnd_level", sizeof("grnd_level")) == 0) {
             m->main.grnd_level = (float)json_object_get_double(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
+        }
+    }
+}
+
+void jsonWeather(json_object *jb, city_map *m) {
+    json_object *jvalue = json_object_array_get_idx(jb, 0);
+    json_object_object_foreach(jvalue, key, val) {
+        if (strncmp(key, "id", sizeof("id")) == 0) {
+            m->weather.id = json_object_get_int(val);
+        } else if (strncmp(key, "main", sizeof("main")) == 0) {
+            strncpy(m->weather.main, json_object_get_string(val), MAX_WEATHER_PAR);
+        } else if (strncmp(key, "description", sizeof("descpription")) == 0) {
+            strncpy(m->weather.desc, json_object_get_string(val), MAX_WEATHER_DESC);
+        } else if (strncmp(key, "icon", sizeof("icon")) == 0) {
+            strncpy(m->weather.icon, json_object_get_string(val), MAX_ICON_ID);
+        } else {
+            printf("Val not found: val(%s)\n", key);
         }
     }
 }
@@ -105,6 +133,8 @@ void jsonWind(json_object *jb, city_map *m) {
             m->wind.speed = (float)json_object_get_double(val);
         } else if (strncmp(key, "deg", sizeof("deg")) == 0) {
             m->wind.deg = (float)json_object_get_double(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -113,6 +143,8 @@ void jsonCloud(json_object *jb, city_map *m) {
     json_object_object_foreach(jb, key, val) {
         if (strncmp(key, "all", sizeof("all")) == 0) {
             m->cloud.all = json_object_get_int(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -123,6 +155,8 @@ void jsonRain(json_object *jb, city_map *m) {
             m->rain.hour_1 = (float)json_object_get_double(val);
         } else if (strncmp(key, "1hour", sizeof("1hour")) == 0) {
             m->rain.hour_2 = (float)json_object_get_double(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -133,6 +167,8 @@ void jsonSnow(json_object *jb, city_map *m) {
             m->snow.hour_1 = (float)json_object_get_double(val);
         } else if (strncmp(key, "1hour", sizeof("1hour")) == 0) {
             m->snow.hour_2 = (float)json_object_get_double(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
@@ -151,42 +187,53 @@ void jsonSys(json_object *jb, city_map *m) {
             m->sys.sunrise = (float)json_object_get_double(val);
         } else if (strncmp(key, "sunset", sizeof("sunset")) == 0) {
             m->sys.sunset = (float)json_object_get_double(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
         }
     }
 }
 
 bool jsonConfig(city_map *m) {
     bool failed = true;
-    //TODO: Get data from curl and place it here
-    json_object *obj = json_tokener_parse(city_data);
+    json_object *obj = json_tokener_parse(getCityInfo().data);
     json_object_object_foreach(obj, key, val) {
         if (strncmp(key, "coord", sizeof("coord")) == 0) {
-            jsonCoord(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonCoord(new_obj, m);
         } else if (strncmp(key, "weather", sizeof("weather")) == 0) {
-            jsonWeather(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonWeather(new_obj, m);
         } else if (strncmp(key, "base", sizeof("base")) == 0) {
             strncpy(m->misc.base, json_object_get_string(val), MAX_BASE_PAR);
         } else if (strncmp(key, "main", sizeof("main")) == 0) {
-            jsonMain(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonMain(new_obj, m);
         } else if (strncmp(key, "visibility", sizeof("visibility")) == 0) {
             m->misc.visibility = (float)json_object_get_double(val);
         } else if (strncmp(key, "wind", sizeof("wind")) == 0) {
-            jsonWind(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonWind(new_obj, m);
         } else if (strncmp(key, "clouds", sizeof("clouds")) == 0) {
-            jsonCloud(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonCloud(new_obj, m);
         } else if (strncmp(key, "dt", sizeof("dt")) == 0) {
             m->misc.dt = json_object_get_int64(val);
         } else if (strncmp(key, "sys", sizeof("sys")) == 0) {
-            jsonSys(obj, m);
+            json_object *new_obj = json_object_object_get(obj, key);
+            jsonSys(new_obj, m);
         } else if (strncmp(key, "id", sizeof("id")) == 0) {
             m->misc.id = json_object_get_int64(val);
         } else if (strncmp(key, "name", sizeof("name")) == 0) {
             strncpy(m->misc.name, json_object_get_string(val), MAX_CITY_NAME);
         } else if (strncmp(key, "cod", sizeof("cod")) == 0) {
             m->misc.cod = json_object_get_int64(val);
+        } else {
+            printf("Key not found: key(%s)\n", key);
+            goto exit;
         }
     }
     failed = false;
     
+exit:
     return failed;
 }

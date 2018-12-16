@@ -13,8 +13,8 @@ all: $(OBJECTS)
 file: city_file.o city.o
 	$(CC) -o cfile city_file.o city.o $(CFL)
 
-parse: city_parse.o city.o
-	$(CC) -o cparse city_parse.o city_file.o city.o $(CFL)
+parse: city_parse.o city.o city_file.o city_curl.o
+	$(CC) -o cparse city_parse.o city_file.o city_curl.o city.o $(CFL)
 
 curl: city_curl.o city.o
 	$(CC) -o ccurl city_curl.o city.o $(CFL)

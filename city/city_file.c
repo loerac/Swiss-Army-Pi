@@ -1,3 +1,6 @@
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
 #include <sys/wait.h>
 #include <sys/types.h>
 
@@ -6,10 +9,10 @@
 
 #define die(e) do { fprintf(stderr, "%s\n", e); exit(EXIT_FAILURE);  } while(0);
 
-static file_info file = {
+static city_file city = {
     .in = NULL,
     .size = -1,
-    .text = NULL,
+    .text = "",
     .name = {'\0'},
     .status = FILE_OK
 };
@@ -72,7 +75,7 @@ bool validateJSON(const char *json, const char *schema) {
     return failed;
 }
 
-bool fileDestroy(file_info *f) {
+bool fileClose(city_file *f) {
     bool failed = true;
     if (fclose(f->in) != 0) {
         printf("Failed to close \'%s\': error(%s)\n", f->name, strerror(errno));
@@ -89,7 +92,7 @@ exit:
     return failed;
 }
 
-bool fileExist(file_info *f) {
+bool fileExist(city_file *f) {
     bool failed = true;
     if (access(f->name, F_OK) == -1) {
         printf("File \'%s\' not found: error(%s)\n", f->name, strerror(errno));
@@ -102,7 +105,7 @@ exit:
     return failed;
 }
 
-bool fileOpen(file_info *f) {
+bool fileOpen(city_file *f) {
     bool failed = true;
     if (!(f->in = fopen(f->name, "rb"))) {
         printf("Failed to open \'%s\': error(%s)\n", f->name, strerror(errno));
@@ -115,7 +118,7 @@ exit:
     return failed;
 }
 
-bool fileRead(file_info *f) {
+bool fileRead(city_file *f) {
     bool failed = true;
     fseek(f->in, 0L, SEEK_END);
     f->size = ftell(f->in);
@@ -123,7 +126,7 @@ bool fileRead(file_info *f) {
     f->text = malloc(f->size);
     if (fread(f->text, f->size, 1, f->in) != 1) {
         printf("Failed to read \'%s\': error(%s)\n", f->name, strerror(errno));
-        file_status sts = fileDestroy(f);
+        file_status sts = fileClose(f);
         f->status = (sts != FILE_OK) ? sts:FILE_READ_ERROR;
         goto exit;
     }
@@ -137,43 +140,42 @@ bool fileProcess(const char *json, const char *schema) {
     bool failed = true;
     if ((json != NULL) && (json[0] == '\0')) {
         printf("No file given\n");
-        strncpy(file.name, "(null)", MAX_FILE_NAME_SIZE);
-        file.status = FILE_NULL_PTR;
+        city.status = FILE_NULL_PTR;
         goto process_exit;
     }
 
-    strncpy(file.name, json, MAX_FILE_NAME_SIZE);
-    failed = validateJSON(file.name, schema);
+    strncpy(city.name, json, sizeof(city.name));   
+    failed = validateJSON(city.name, schema);
     if (failed) {
         goto process_exit;
     }
 
-    failed = fileExist(&file);
+    failed = fileExist(&city);
     if (failed) {
         goto process_exit;
     }
 
-    failed = fileOpen(&file);
+    failed = fileOpen(&city);
     if (failed) {
         goto process_exit;
     }
 
-    failed = fileRead(&file);
+    failed = fileRead(&city);
     if (failed) {
         goto process_exit;
     }
 
-    if (file.status == FILE_OK) {
+    if (city.status == FILE_OK) {
         goto exit;
     }
 
 process_exit:
-    printf("Processing \'%s\' failed: status(%d)\n", file.name, file.status);
+    printf("Processing \'%s\' failed: status(%d)\n", city.name, city.status);
 
 exit:
     return failed;
 }
 
-const file_info getFileInfo( void ) {
-    return file;
+const city_file getCityFile( void ) {
+    return city;
 }

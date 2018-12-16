@@ -1,10 +1,9 @@
 #ifndef _CITY_FILEH_
 #define _CITY_FILEH_
 
-#include "city.h"
 #include <unistd.h>
-
-#define MAX_FILE_NAME_SIZE 15U
+#include <stdbool.h>
+#include <linux/limits.h>
 
 typedef enum file_status {
     FILE_OK = 0,
@@ -16,15 +15,15 @@ typedef enum file_status {
     FILE_NULL_PTR,
 } file_status;
 
-typedef struct file_info_s {
+typedef struct city_file_s {
     FILE *in;
     long size;
     char *text;
-    char name[MAX_FILE_NAME_SIZE];
+    char name[PATH_MAX + 1];
     file_status status;
-} file_info;
+} city_file;
 
-bool fileProcess(const char *json, const char *schema);
-const file_info getFileInfo( void );
+bool fileProcess(const char *json);
+const city_file getCityFile( void );
 
 #endif

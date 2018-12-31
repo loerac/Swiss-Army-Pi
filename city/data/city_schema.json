@@ -1,52 +1,49 @@
 {
-  "definitions": {},
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://example.com/root.json",
   "type": "object",
-  "title": "The Root Schema",
   "properties": {
     "id": {
       "$id": "#/properties/id",
       "type": "integer",
-      "title": "The Id Schema",
-      "default": 0,
-      "examples": [
-        5263045
-      ]
+      "minimum": 6.0,
+      "maximum": 7.0
     },
-    "name": {
-      "$id": "#/properties/name",
-      "type": "string",
-      "title": "The Name Schema",
-      "default": "",
-      "examples": [
-        "Milwaukee"
+    "region": {
+      "$id": "#/properties/region",
+      "type": "object",
+      "required": [
+        "country",
+        "city"
       ],
-      "pattern": "^(.*)$"
-    },
-    "country": {
-      "$id": "#/properties/country",
-      "type": "string",
-      "title": "The Country Schema",
-      "default": "",
-      "examples": [
-        "US"
-      ],
-      "pattern": "^(.*)$"
-    },
-    "zipcode": {
-      "$id": "#/properties/zipcode",
-      "type": "integer",
-      "title": "The Zipcode Schema",
-      "default": 0,
-      "examples": [
-        53209
-      ]
+      "properties": {
+        "country": {
+          "$id": "#/properties/region/properties/country",
+          "type": "string"
+        },
+        "city": {
+          "$id": "#/properties/region/properties/city",
+          "type": "object",
+          "required": [
+            "name",
+            "zipcode"
+          ],
+          "properties": {
+            "name": {
+              "$id": "#/properties/region/properties/city/properties/name",
+              "type": "string"
+            },
+            "zipcode": {
+              "$id": "#/properties/region/properties/city/properties/zipcode",
+              "type": "integer",
+              "minimum": 3.0,
+              "maximum": 5.0
+            }
+          }
+        }
+      }
     },
     "coord": {
       "$id": "#/properties/coord",
       "type": "object",
-      "title": "The Coord Schema",
       "required": [
         "lon",
         "lat"
@@ -54,23 +51,30 @@
       "properties": {
         "lon": {
           "$id": "#/properties/coord/properties/lon",
-          "type": "number",
-          "title": "The Lon Schema",
-          "default": 0.0,
-          "examples": [
-            -87.906471
-          ]
+          "type": "double"
         },
         "lat": {
           "$id": "#/properties/coord/properties/lat",
-          "type": "number",
-          "title": "The Lat Schema",
-          "default": 0.0,
-          "examples": [
-            43.038898
-          ]
+          "type": "double"
         }
       }
+    },
+    "units": {
+      "$id": "#/properties/units",
+      "type": "integer"
+    },
+    "language": {
+      "$id": "#/properties/language",
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 5
+    },
+    "key": {
+      "$id": "#/properties/key",
+      "type": "string"
     }
-  }
+  },
+  "required": [
+    "key"
+  ]
 }

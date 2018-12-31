@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <json-c/json.h>
 
 #include "city.h"
 #include "city_file.h"
-
-#define die(e) do { fprintf(stderr, "%s\n", e); exit(EXIT_FAILURE);  } while(0);
+#include "city_types.h"
 
 static city_file city = {
     .in = NULL,
@@ -16,64 +16,6 @@ static city_file city = {
     .name = {'\0'},
     .status = FILE_OK
 };
-
-bool validateJSON(const char *json, const char *schema) {
-    pid_t pid;
-    int status;
-    int link[2];
-    bool failed = true;
-    char *arg[5] = {'\0'};
-    char valid[4096] = {'\0'};
-    
-    if (pipe(link) == -1) {
-        die("pipe");
-    } else if ((pid = fork()) == -1) {
-        die("fork");
-        printf("Forking error: error(%s)\n", strerror(errno));
-    } else if (pid == 0) {
-        dup2(link[1], STDERR_FILENO);
-        close(link[0]);
-        close(link[1]);
-        arg[0] = "/usr/bin/json";
-        arg[1] = "validate";
-        // FIXME: Values not being written
-        snprintf(arg[2], 64, "--schema-file=%s", schema);
-        snprintf(arg[3], 64, "--document-file=%s", json);
-        printf("arg[2]-----------%s\n", arg[2]);
-        printf("arg[3]-----------%s\n", arg[3]);
-        status = execv(arg[0], arg);
-        if (status == -1) {
-            printf("Error while validating JSON: error(%s)\n", strerror(errno));
-        }
-        die("execl");
-    } else {
-        /*if ((pid = waitpid(pid, &status, WNOHANG)) == -1) {
-            printf("Failed waitpid: error(%s)\n", strerror(errno));
-        } else {
-            do {
-                if (WIFEXITED(status)) {
-                    printf("Child exited with status of %d\n", WEXITSTATUS(status));
-                } else if (pid == 0) {
-                    sleep(1);
-                } else {
-                    printf("Child did not exit successfully\n");
-                }
-            } while (pid == 0);
-        }*/
-        close(link[1]);
-        int nbytes = read(link[0], valid, sizeof(valid));
-        printf("%s\n", valid);
-        if (nbytes == -1) {
-            printf("Error while reading STDERR_FILENO: error(%s)\n", strerror(errno));
-        } else if (valid[0] == '\0') {
-            failed = false;
-        } else {
-            printf("%s failed validation\n", json);
-        }
-    }
-
-    return failed;
-}
 
 bool fileClose(city_file *f) {
     bool failed = true;
@@ -145,10 +87,6 @@ bool fileProcess(const char *json, const char *schema) {
     }
 
     strncpy(city.name, json, sizeof(city.name));   
-    failed = validateJSON(city.name, schema);
-    if (failed) {
-        goto process_exit;
-    }
 
     failed = fileExist(&city);
     if (failed) {
@@ -176,6 +114,82 @@ exit:
     return failed;
 }
 
-const city_file getCityFile( void ) {
-    return city;
+void jsonUnitURL(url_sts *u) {
+    switch (u->e_format) {
+    case METRIC:
+        strncpy(u->s_format, "metric", MAX_UNIT_FORMAT);
+        break;
+    case KELVIN:
+        strncpy(u->s_format, "kelvin", MAX_UNIT_FORMAT);
+        break;
+    default:
+        strncpy(u->s_format, "imperial", MAX_UNIT_FORMAT);
+    }
+}
+
+void customCoord(json_object *jb, url_sts *u, const char *k) {
+    u->find_by |= CITY_COORD;
+    json_object *new_obj = json_object_object_get(jb, k);
+    json_object_object_foreach(new_obj, key, val) {
+        if (strncmp(key, "lon", sizeof("lon")) == 0) {
+            strncpy(u->lon, json_object_get_string(val), MAX_LAT_LON);
+        } else if (strncmp(key, "lat", sizeof("lat")) == 0) {
+            strncpy(u->lat, json_object_get_string(val), MAX_LAT_LON);
+        }
+    }
+}
+
+void customCity(json_object *jb, url_sts *u, const char *k) {
+    json_object *new_object = json_object_object_get(jb, k);
+    json_object_object_foreach(new_object, key, val) {
+        if (strncmp(key, "name", sizeof("name")) == 0) {
+            strncpy(u->city, json_object_get_string(val), MAX_CITY_NAME);
+            u->find_by |= CITY_NAME;
+        } else if (strncmp(key, "zipcode", sizeof("zipcode")) == 0) {
+            strncpy(u->zip, json_object_get_string(val), MAX_ZIPCODE);
+            u->find_by |= CITY_ZIP;
+        }
+    }
+}
+
+void customRegion(json_object *jb, url_sts *u, const char *k) {
+    json_object *new_object = json_object_object_get(jb, k);
+    json_object_object_foreach(new_object, key, val) {
+        if (strncmp(key, "country", sizeof("country")) == 0) {
+            strncpy(u->country, json_object_get_string(val), MAX_COUNTRY_CODE);
+        } else if (strncmp(key, "city", sizeof("city")) == 0) {
+            customCity(new_object, u, key);
+        }
+    }
+}
+
+bool parseCustom(url_sts *u) {
+    bool failed = true;
+    if (    (city.size == -1)
+        &&  (city.status != FILE_OK) ) {
+        printf("Invalid file\n");
+        goto exit;
+    }
+
+    json_object *obj = json_tokener_parse(city.text);
+    json_object_object_foreach(obj, key, val) {
+        if (strncmp(key, "id", sizeof("id")) == 0) {
+            strncpy(u->id, json_object_get_string(val), MAX_ID);
+        } else if (strncmp(key, "key", sizeof("key")) == 0) {
+            strncpy(u->key, json_object_get_string(val), MAX_KEY_SIZE);
+        } else if (strncmp(key, "language", sizeof("language")) == 0) {
+            strncpy(u->lang, json_object_get_string(val), MAX_LANG_SIZE);
+        } else if (strncmp(key, "region", sizeof("region")) == 0) {
+            customRegion(obj, u, key);
+        } else if (strncmp(key, "coord", sizeof("coord")) == 0) {
+            customCoord(obj, u, key);
+        } else if (strncmp(key, "units", sizeof("units")) == 0) {
+            u->e_format = json_object_get_int(val);
+            jsonUnitURL(u);
+        }
+    }
+    failed = false;
+
+exit:
+    return failed;
 }

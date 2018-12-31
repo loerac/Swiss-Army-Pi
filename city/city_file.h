@@ -24,6 +24,6 @@ typedef struct city_file_s {
 } city_file;
 
 bool fileProcess(const char *json);
-const city_file getCityFile( void );
+bool parseCustom(url_sts *u);
 
 #endif

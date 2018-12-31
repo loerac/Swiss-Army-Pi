@@ -1,7 +1,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "city_curl.h"
+#include "city_types.h"
 
 #define WEATHER_URL      "https://api.openweathermap.org/data/2.5/weather?"
 #define MAX_GETBY_METHOD 64U
@@ -34,25 +36,18 @@ exit:
     return real_size;
 }
 
-get_city_by getBy(char *gb, const url_sts *url) {
-    get_city_by get_by = GET_FAILED;
-    if (url->id[0] != '\0') {
-        get_by = GET_BY_ID;
+bool findBy(char *gb, const url_sts *url) {
+    if ((url->find_by & CITY_ID) == CITY_ID) {
         snprintf(gb, MAX_GETBY_METHOD, "id=%s", url->id);
-    } else if (url->zip[0] != '\0') {
-        get_by = GET_BY_ZIPCODE;
+    } else if ((url->find_by & CITY_ZIP) == CITY_ZIP) {
         snprintf(gb, MAX_GETBY_METHOD, "zip=%s", url->zip);
-    } else if (    (url->city[0] != '\0')
-               &&  (url->country[0] != '\0')) {
-        get_by = GET_BY_CITY;
+    } else if ((url->find_by & CITY_NAME) == CITY_NAME) {
         snprintf(gb, BUFSIZ, "q=%s,%s", url->city, url->country);
-    } else if (    (url->lat[0] != '\0')
-               &&  (url->lon[0] != '\0')) {
-        get_by = GET_BY_LATLOT;
+    } else if ((url->find_by & CITY_COORD) == CITY_COORD) {
         snprintf(gb, MAX_GETBY_METHOD, "lat=%s&log%s", url->lat, url->lon);
     }
 
-    return get_by;
+    return url->find_by;
 }
 
 bool weatherURL(const url_sts *url) {
@@ -60,18 +55,18 @@ bool weatherURL(const url_sts *url) {
     CURL *curl_handle;
     bool failed = true;
     uint32_t url_size = 0;
-    char url_string[MAX_GETBY_METHOD];
+    char url_search_city[MAX_GETBY_METHOD];
     char *url_text = "";
 
-    get_city_by get_by = getBy(url_string, url);
-    if (get_by == GET_FAILED) {
-        printf("No valid key given to search city: status(%d)\n", get_by);
+    int find_by = findBy(url_search_city, url);
+    if ( find_by == 0 ) {
+        printf("No valid key given to search city: status(%d)\n", find_by);
         goto exit;
     }
 
-    url_size = strlen(WEATHER_URL) + strlen(url->key) + MAX_KEY_SIZE + strlen(url_string) + 1;
+    url_size = strlen(WEATHER_URL) + strlen(url->key) + MAX_KEY_SIZE + strlen(url_search_city) + strlen(url->s_format) + 1;
     url_text= malloc(url_size);
-    snprintf(url_text, url_size, "%s%s&appid=%s", WEATHER_URL, url_string, url->key);
+    snprintf(url_text, url_size, "%s%s&units=%s&appid=%s", WEATHER_URL, url_search_city, url->s_format, url->key);
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl_handle = curl_easy_init();

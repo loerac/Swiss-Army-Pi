@@ -23,7 +23,7 @@ typedef struct city_file_s {
     file_status status;
 } city_file;
 
-bool fileProcess(const char *json);
-bool parseCustom(url_sts *u);
+bool fileProcess(const char *json, const char *schema);
+bool customParse(url_sts *u);
 
 #endif

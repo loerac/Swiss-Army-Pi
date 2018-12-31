@@ -163,13 +163,15 @@ void customRegion(json_object *jb, url_sts *u, const char *k) {
     }
 }
 
-bool parseCustom(url_sts *u) {
+bool customParse(url_sts *u) {
     bool failed = true;
     if (    (city.size == -1)
         &&  (city.status != FILE_OK) ) {
         printf("Invalid file\n");
         goto exit;
     }
+    u->e_format = 0;
+    jsonUnitURL(u);
 
     json_object *obj = json_tokener_parse(city.text);
     json_object_object_foreach(obj, key, val) {

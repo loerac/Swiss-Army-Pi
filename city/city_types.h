@@ -10,4 +10,11 @@ typedef enum city_init_s {
     CITY_WEATHER_URL_NOK
 } city_init;
 
+typedef enum city_search_s {
+    CITY_ID = 1,
+    CITY_NAME = 2,
+    CITY_ZIP = 4,
+    CITY_COORD = 8
+} city_search;
+
 #endif

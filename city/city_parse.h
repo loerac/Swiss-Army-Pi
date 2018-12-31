@@ -5,8 +5,8 @@
 
 #include "city.h"
 #include "city_file.h"
+#include "city_types.h"
 
-bool parseCustom(url_sts *u);
 bool jsonConfig(city_map *m);
 
 #endif

@@ -1,6 +1,7 @@
 #ifndef _CITYH_
 #define _CITYH_
 
+#include <time.h>
 #include <stdio.h>
 
 #define MAX_KEY_SIZE        32U
@@ -21,6 +22,10 @@
 
 #define MAX_BASE_PAR        64U
 
+#define MAX_WEATHER         9u
+
+#define MAX_CITIES          2u
+
 typedef enum unit_format_e {
     IMPERIAL = 0,
     METRIC,
@@ -38,6 +43,7 @@ typedef struct url_sts_s {
     char lon[MAX_LAT_LON];
     char lat[MAX_LAT_LON];
     char zip[MAX_ZIPCODE];
+    long find_by;
 } url_sts;
 
 typedef struct city_coord_s {
@@ -65,6 +71,7 @@ typedef struct city_main_s {
 typedef struct city_wind_s {
     float speed;
     float deg;
+    float gust;
 } city_wind;
 
 typedef struct city_clouds_s {
@@ -86,8 +93,8 @@ typedef struct city_sys_s {
     int type;
     char message[MAX_MESSAGE_SIZE];
     char country[MAX_COUNTRY_CODE];
-    float sunrise;
-    long sunset;
+    time_t sunrise;
+    time_t sunset;
 } city_sys;
 
 typedef struct city_misc_s {
@@ -101,7 +108,7 @@ typedef struct city_misc_s {
 
 typedef struct city_map_s {
     city_coord      coord;
-    city_weather    weather;
+    city_weather    weather[MAX_WEATHER];
     city_main       main;
     city_wind       wind;
     city_cloud      cloud;

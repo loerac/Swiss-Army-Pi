@@ -8,14 +8,13 @@
 #define WEATHER_URL      "https://api.openweathermap.org/data/2.5/weather?"
 #define MAX_GETBY_METHOD 64U
 
-static city_info city = {
-    .size = 0,
-    .data = "",
-};
+static city_info city = { '\0' };
 
 void destroyCity( void ) {
     city.size = 0;
-    free(city.data);
+    if ( city.data[0] != '\0' ) {
+        free(city.data);
+    }
 }
 
 size_t writeMemoryCb(void *contents, size_t size, size_t nmemb, void *userd) {
@@ -60,7 +59,7 @@ bool weatherURL(const url_sts *url) {
 
     int find_by = findBy(url_search_city, url);
     if ( find_by == 0 ) {
-        printf("No valid key given to search city: status(%d)\n", find_by);
+        printf("No valid key given to search city\n");
         goto exit;
     }
 

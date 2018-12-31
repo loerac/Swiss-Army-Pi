@@ -9,7 +9,7 @@
 #define CITY_CUSTOM "data/city.json"
 #define CITY_SCHEMA "data/city_schema.json"
 
-static url_sts  url[MAX_CITIES] = { '\0' };
+static url_sts  url = { '\0' };
 static city_map map = { '\0' };
 
 city_init cityInit( void ) {
@@ -22,7 +22,7 @@ city_init cityInit( void ) {
         goto exit;
     }
 
-    failed = parseCustom(&url);
+    failed = customParse(&url);
     if (failed) {
         status = CITY_PARSE_CUSTOM_NOK;
         printf("Failed to parse custom file\n");

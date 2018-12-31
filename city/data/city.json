@@ -1,10 +1,36 @@
 {
-  "id": 5263045,
-  "name": "Milwaukee",
-  "country": "US",
-  "zipcode": 53209,
-  "coord": {
-    "lon": -87.906471,
-    "lat": 43.038898
+  "area": {
+    "id": 5263058,
+    "region": {
+      "country": "US",
+      "city": {
+        "name": "Milwuakee",
+        "zipcode": 53209
+      }
+    },
+    "coord": {
+      "lon": -87.966751,
+      "lat": 43.000568
+    },
+    "units":0,
+    "language":"en",
+    "key":""
+  },
+  "area": {
+    "id": 5022134,
+    "region": {
+      "country": "US",
+      "city": {
+        "name": "Cottage Grove",
+        "zipcode": 55016
+      }
+    },
+    "coord": {
+      "lon": -92.943817,
+      "lat": 44.82774
+    },
+    "units":0,
+    "language":"en",
+    "key":""
   }
 }

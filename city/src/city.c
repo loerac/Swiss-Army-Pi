@@ -6,7 +6,7 @@
 #include "city_parse.h"
 #include "city_types.h"
 
-#define CITY_CUSTOM "data/city.json"
+#define CITY_CUSTOM "/custom/city/city.json"
 #define CITY_SCHEMA "data/city_schema.json"
 
 static url_sts  url = { '\0' };

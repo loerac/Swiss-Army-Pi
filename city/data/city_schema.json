@@ -3,9 +3,7 @@
   "properties": {
     "id": {
       "$id": "#/properties/id",
-      "type": "integer",
-      "minimum": 6.0,
-      "maximum": 7.0
+      "type": "integer"
     },
     "region": {
       "$id": "#/properties/region",
@@ -33,9 +31,7 @@
             },
             "zipcode": {
               "$id": "#/properties/region/properties/city/properties/zipcode",
-              "type": "integer",
-              "minimum": 3.0,
-              "maximum": 5.0
+              "type": "integer"
             }
           }
         }
@@ -51,11 +47,11 @@
       "properties": {
         "lon": {
           "$id": "#/properties/coord/properties/lon",
-          "type": "double"
+          "type": "number"
         },
         "lat": {
           "$id": "#/properties/coord/properties/lat",
-          "type": "double"
+          "type": "number"
         }
       }
     },

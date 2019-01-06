@@ -1,14 +1,35 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "city_curl.h"
 #include "city_types.h"
 
 #define WEATHER_URL      "https://api.openweathermap.org/data/2.5/weather?"
+#define MAX_UNITS_STRING 7U
+#define MAX_APPID_STRING 7U
 #define MAX_GETBY_METHOD 64U
 
+static char *url_string = "";
+static size_t url_size = 0;
 static city_info city = { '\0' };
+
+void url_write(const size_t size, const int string, ...) {
+    int i;
+    va_list al;
+    va_start(al, string);
+    url_size += size;
+
+    for (i = 1; i <= string; i++) {
+        if (strncmp(url_string, "", url_size) == 0) {
+            url_string = malloc(sizeof(char*) * url_size);
+        } else {
+            url_string = realloc(url_string, url_size);
+        }
+        (void)strncat(url_string, va_arg(al, char*), url_size);
+    }
+}
 
 void destroyCity( void ) {
     city.size = 0;
@@ -53,9 +74,7 @@ bool weatherURL(const url_sts *url) {
     CURLcode res;
     CURL *curl_handle;
     bool failed = true;
-    uint32_t url_size = 0;
     char url_search_city[MAX_GETBY_METHOD];
-    char *url_text = "";
 
     int find_by = findBy(url_search_city, url);
     if ( find_by == 0 ) {
@@ -63,14 +82,15 @@ bool weatherURL(const url_sts *url) {
         goto exit;
     }
 
-    url_size = strlen(WEATHER_URL) + strlen(url->key) + MAX_KEY_SIZE + strlen(url_search_city) + strlen(url->s_format) + 1;
-    url_text= malloc(url_size);
-    snprintf(url_text, url_size, "%s%s&units=%s&appid=%s", WEATHER_URL, url_search_city, url->s_format, url->key);
+    url_write(strlen(WEATHER_URL) + 1, 1, WEATHER_URL);
+    url_write(strlen(url_search_city) + 1, 1, url_search_city);
+    url_write(MAX_UNITS_STRING + strlen(url->s_format) + 1, 2, "&units=", url->s_format);
+    url_write(MAX_APPID_STRING + strlen(url->key) + 1, 2, "&appid=", url->key);
 
     curl_global_init(CURL_GLOBAL_ALL);
     curl_handle = curl_easy_init();
 
-    curl_easy_setopt(curl_handle, CURLOPT_URL, url_text);
+    curl_easy_setopt(curl_handle, CURLOPT_URL, url_string);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeMemoryCb);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&city);
     curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");

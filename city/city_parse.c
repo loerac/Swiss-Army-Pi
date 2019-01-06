@@ -51,11 +51,11 @@ void jsonWeather(json_object *jb, city_map *m, const char *k) {
             if (strncmp(key, "id", sizeof("id")) == 0) {
                 m->weather[i].id = json_object_get_int(val);
             } else if (strncmp(key, "main", sizeof("main")) == 0) {
-                strncpy(m->weather[i].main, json_object_get_string(val), MAX_WEATHER_PAR);
+                (void)strncpy(m->weather[i].main, json_object_get_string(val), MAX_WEATHER_PAR);
             } else if (strncmp(key, "description", sizeof("descpription")) == 0) {
-                strncpy(m->weather[i].desc, json_object_get_string(val), MAX_WEATHER_DESC);
+                (void)strncpy(m->weather[i].desc, json_object_get_string(val), MAX_WEATHER_DESC);
             } else if (strncmp(key, "icon", sizeof("icon")) == 0) {
-                snprintf(m->weather[i].icon, PATH_MAX + 1, "http://openweathermap.org/img/w/%s.png", json_object_get_string(val));
+                (void)snprintf(m->weather[i].icon, PATH_MAX + 1, "http://openweathermap.org/img/w/%s.png", json_object_get_string(val));
             }
         }
     }
@@ -108,9 +108,9 @@ void jsonSys(json_object *jb, city_map *m) {
         } else if (strncmp(key, "id", sizeof("id")) == 0) {
             m->sys.id= json_object_get_int(val);
         } else if (strncmp(key, "message", sizeof("message")) == 0) {
-            strncpy(m->sys.message, json_object_get_string(val), MAX_MESSAGE_SIZE);
+            (void)strncpy(m->sys.message, json_object_get_string(val), MAX_MESSAGE_SIZE);
         } else if (strncmp(key, "country", sizeof("country")) == 0) {
-            strncpy(m->sys.country, json_object_get_string(val), MAX_COUNTRY_CODE);
+            (void)strncpy(m->sys.country, json_object_get_string(val), MAX_COUNTRY_CODE);
         } else if (strncmp(key, "sunrise", sizeof("sunrise")) == 0) {
             m->sys.sunrise = (time_t)json_object_get_double(val);
         } else if (strncmp(key, "sunset", sizeof("sunset")) == 0) {
@@ -126,7 +126,7 @@ bool jsonConfig(city_map *m) {
         printf("No data available\n");
         failed = true;
     } else {
-        json_object *obj = json_tokener_parse(getCityInfo().data);
+        json_object *obj = json_tokener_parse(city_data);
         json_object_object_foreach(obj, key, val) {
             if (strncmp(key, "coord", sizeof("coord")) == 0) {
                 json_object *new_obj = json_object_object_get(obj, key);
@@ -147,7 +147,7 @@ bool jsonConfig(city_map *m) {
                 json_object *new_obj = json_object_object_get(obj, key);
                 jsonSys(new_obj, m);
             } else if (strncmp(key, "base", sizeof("base")) == 0) {
-                strncpy(m->misc.base, json_object_get_string(val), MAX_BASE_PAR);
+                (void)strncpy(m->misc.base, json_object_get_string(val), MAX_BASE_PAR);
             } else if (strncmp(key, "visibility", sizeof("visibility")) == 0) {
                 m->misc.visibility = (float)json_object_get_double(val);
             } else if (strncmp(key, "dt", sizeof("dt")) == 0) {
@@ -155,7 +155,7 @@ bool jsonConfig(city_map *m) {
             } else if (strncmp(key, "id", sizeof("id")) == 0) {
                 m->misc.id = json_object_get_int64(val);
             } else if (strncmp(key, "name", sizeof("name")) == 0) {
-                strncpy(m->misc.name, json_object_get_string(val), MAX_CITY_NAME);
+                (void)strncpy(m->misc.name, json_object_get_string(val), MAX_CITY_NAME);
             } else if (strncmp(key, "cod", sizeof("cod")) == 0) {
                 m->misc.cod = json_object_get_int64(val);
             }

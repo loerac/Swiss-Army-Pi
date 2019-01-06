@@ -32,7 +32,11 @@ void url_write(const size_t size, const int string, ...) {
 }
 
 void destroyCity( void ) {
+    url_size = 0;
     city.size = 0;
+    if ( url_string[0] != '\0' ) {
+        free(url_string);
+    }
     if ( city.data[0] != '\0' ) {
         free(city.data);
     }
@@ -58,13 +62,13 @@ exit:
 
 bool findBy(char *gb, const url_sts *url) {
     if ((url->find_by & CITY_ID) == CITY_ID) {
-        snprintf(gb, MAX_GETBY_METHOD, "id=%s", url->id);
+        (void)snprintf(gb, MAX_GETBY_METHOD, "id=%s", url->id);
     } else if ((url->find_by & CITY_ZIP) == CITY_ZIP) {
-        snprintf(gb, MAX_GETBY_METHOD, "zip=%s", url->zip);
+        (void)snprintf(gb, MAX_GETBY_METHOD, "zip=%s", url->zip);
     } else if ((url->find_by & CITY_NAME) == CITY_NAME) {
-        snprintf(gb, BUFSIZ, "q=%s,%s", url->city, url->country);
+        (void)snprintf(gb, BUFSIZ, "q=%s,%s", url->city, url->country);
     } else if ((url->find_by & CITY_COORD) == CITY_COORD) {
-        snprintf(gb, MAX_GETBY_METHOD, "lat=%s&log%s", url->lat, url->lon);
+        (void)snprintf(gb, MAX_GETBY_METHOD, "lat=%s&log%s", url->lat, url->lon);
     }
 
     return url->find_by;

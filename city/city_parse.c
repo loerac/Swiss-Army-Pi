@@ -101,6 +101,12 @@ void jsonSnow(json_object *jb, city_map *m) {
     }
 }
 
+void timeToChar(time_t unix_time, char *military_time) {
+    struct tm *timeinfo;
+    timeinfo = localtime(&unix_time);
+    strftime(military_time, MAX_SUN_RISE_SET, "%R", timeinfo);
+}
+
 void jsonSys(json_object *jb, city_map *m) {
     json_object_object_foreach(jb, key, val) {
         if (strncmp(key, "type", sizeof("type")) == 0) {
@@ -112,9 +118,9 @@ void jsonSys(json_object *jb, city_map *m) {
         } else if (strncmp(key, "country", sizeof("country")) == 0) {
             (void)strncpy(m->sys.country, json_object_get_string(val), MAX_COUNTRY_CODE);
         } else if (strncmp(key, "sunrise", sizeof("sunrise")) == 0) {
-            m->sys.sunrise = (time_t)json_object_get_double(val);
+            timeToChar((time_t)json_object_get_double(val), m->sys.sunrise);
         } else if (strncmp(key, "sunset", sizeof("sunset")) == 0) {
-            m->sys.sunset = (time_t)json_object_get_double(val);
+            timeToChar((time_t)json_object_get_double(val), m->sys.sunset);
         }
     }
 }

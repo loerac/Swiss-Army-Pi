@@ -19,10 +19,11 @@
 
 #define MAX_MESSAGE_SIZE    16U
 #define MAX_COUNTRY_CODE    2U
+#define MAX_SUN_RISE_SET    8U
 
 #define MAX_BASE_PAR        64U
 
-#define MAX_WEATHER         9u
+#define MAX_WEATHER         12u
 
 #define MAX_CITIES          2u
 
@@ -93,8 +94,8 @@ typedef struct city_sys_s {
     int type;
     char message[MAX_MESSAGE_SIZE];
     char country[MAX_COUNTRY_CODE];
-    time_t sunrise;
-    time_t sunset;
+    char sunrise[MAX_SUN_RISE_SET];
+    char sunset[MAX_SUN_RISE_SET];
 } city_sys;
 
 typedef struct city_misc_s {

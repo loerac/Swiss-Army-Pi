@@ -9,13 +9,7 @@
 #include "city_file.h"
 #include "city_types.h"
 
-static city_file city = {
-    .in = NULL,
-    .size = -1,
-    .text = "",
-    .name = {'\0'},
-    .status = FILE_OK
-};
+static city_file city = { '\0' };
 
 bool fileClose(city_file *f) {
     bool failed = true;
@@ -62,7 +56,7 @@ exit:
 
 bool fileRead(city_file *f) {
     bool failed = true;
-    fseek(f->in, 0L, SEEK_END);
+    (void)fseek(f->in, 0L, SEEK_END);
     f->size = ftell(f->in);
     rewind(f->in);
     f->text = malloc(f->size);
@@ -86,7 +80,7 @@ bool fileProcess(const char *json, const char *schema) {
         goto process_exit;
     }
 
-    strncpy(city.name, json, sizeof(city.name));   
+    (void)strncpy(city.name, json, sizeof(city.name));
 
     failed = fileExist(&city);
     if (failed) {
@@ -117,13 +111,13 @@ exit:
 void jsonUnitURL(url_sts *u) {
     switch (u->e_format) {
     case METRIC:
-        strncpy(u->s_format, "metric", MAX_UNIT_FORMAT);
+        (void)strncpy(u->s_format, "metric", MAX_UNIT_FORMAT);
         break;
     case KELVIN:
-        strncpy(u->s_format, "kelvin", MAX_UNIT_FORMAT);
+        (void)strncpy(u->s_format, "kelvin", MAX_UNIT_FORMAT);
         break;
     default:
-        strncpy(u->s_format, "imperial", MAX_UNIT_FORMAT);
+        (void)strncpy(u->s_format, "imperial", MAX_UNIT_FORMAT);
     }
 }
 
@@ -132,9 +126,9 @@ void customCoord(json_object *jb, url_sts *u, const char *k) {
     json_object *new_obj = json_object_object_get(jb, k);
     json_object_object_foreach(new_obj, key, val) {
         if (strncmp(key, "lon", sizeof("lon")) == 0) {
-            strncpy(u->lon, json_object_get_string(val), MAX_LAT_LON);
+            (void)strncpy(u->lon, json_object_get_string(val), MAX_LAT_LON);
         } else if (strncmp(key, "lat", sizeof("lat")) == 0) {
-            strncpy(u->lat, json_object_get_string(val), MAX_LAT_LON);
+            (void)strncpy(u->lat, json_object_get_string(val), MAX_LAT_LON);
         }
     }
 }
@@ -143,10 +137,10 @@ void customCity(json_object *jb, url_sts *u, const char *k) {
     json_object *new_object = json_object_object_get(jb, k);
     json_object_object_foreach(new_object, key, val) {
         if (strncmp(key, "name", sizeof("name")) == 0) {
-            strncpy(u->city, json_object_get_string(val), MAX_CITY_NAME);
+            (void)strncpy(u->city, json_object_get_string(val), MAX_CITY_NAME);
             u->find_by |= CITY_NAME;
         } else if (strncmp(key, "zipcode", sizeof("zipcode")) == 0) {
-            strncpy(u->zip, json_object_get_string(val), MAX_ZIPCODE);
+            (void)strncpy(u->zip, json_object_get_string(val), MAX_ZIPCODE);
             u->find_by |= CITY_ZIP;
         }
     }
@@ -156,7 +150,7 @@ void customRegion(json_object *jb, url_sts *u, const char *k) {
     json_object *new_object = json_object_object_get(jb, k);
     json_object_object_foreach(new_object, key, val) {
         if (strncmp(key, "country", sizeof("country")) == 0) {
-            strncpy(u->country, json_object_get_string(val), MAX_COUNTRY_CODE);
+            (void)strncpy(u->country, json_object_get_string(val), MAX_COUNTRY_CODE);
         } else if (strncmp(key, "city", sizeof("city")) == 0) {
             customCity(new_object, u, key);
         }
@@ -176,11 +170,11 @@ bool customParse(url_sts *u) {
     json_object *obj = json_tokener_parse(city.text);
     json_object_object_foreach(obj, key, val) {
         if (strncmp(key, "id", sizeof("id")) == 0) {
-            strncpy(u->id, json_object_get_string(val), MAX_ID);
+            (void)strncpy(u->id, json_object_get_string(val), MAX_ID);
         } else if (strncmp(key, "key", sizeof("key")) == 0) {
-            strncpy(u->key, json_object_get_string(val), MAX_KEY_SIZE);
+            (void)strncpy(u->key, json_object_get_string(val), MAX_KEY_SIZE);
         } else if (strncmp(key, "language", sizeof("language")) == 0) {
-            strncpy(u->lang, json_object_get_string(val), MAX_LANG_SIZE);
+            (void)strncpy(u->lang, json_object_get_string(val), MAX_LANG_SIZE);
         } else if (strncmp(key, "region", sizeof("region")) == 0) {
             customRegion(obj, u, key);
         } else if (strncmp(key, "coord", sizeof("coord")) == 0) {

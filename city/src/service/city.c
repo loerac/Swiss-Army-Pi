@@ -1,10 +1,10 @@
 #include <stdbool.h>
 
 #include "city.h"
-#include "city_file.h"
 #include "city_curl.h"
 #include "city_parse.h"
 #include "city_types.h"
+#include "city_config.h"
 
 #define CITY_CUSTOM "/custom/city/city.json"
 

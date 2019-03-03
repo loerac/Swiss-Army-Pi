@@ -32,7 +32,7 @@ bool check_wireless(const char* ifname, char* protocol) {
    }
 
    if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
-      if (protocol[0] != '\0') { 
+      if (protocol[0] != '\0') {
           (void)strncpy(protocol, pwrq.u.name, IFNAMSIZ);
       }
       (void)close(sock);

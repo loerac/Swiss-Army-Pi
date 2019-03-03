@@ -6,6 +6,6 @@ clean:
 	rm -rf ${LIB_PATH}
 	${MAKE} -C service $@
 
-.PHONY: wifi
-wifi:
+.PHONY: net
+net:
 	${MAKE} -C service all

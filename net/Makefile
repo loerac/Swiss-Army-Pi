@@ -11,25 +11,25 @@ export SRC_BASE=$(CURDIR)/src
 export BIN_PATH=$(SRC_BASE)/bin
 export LIB_PATH=$(SRC_BASE)/lib
 
-all: ${wifi_all}
-bin: ${wifi_bin}
-lib: ${wifi_lib}
-include: ${wifi_include}
-data: ${wifi_data}
+all: ${net_all}
+bin: ${net_bin}
+lib: ${net_lib}
+include: ${net_include}
+data: ${net_data}
 
 clean:
 	${MAKE} -C src clean
-	rm -rf ${wifi_bin} ${wifi_lib} ${wifi_lib} ${wifi_include}
+	rm -rf ${net_bin} ${net_lib} ${net_lib} ${net_include}
 
-.PHONY: all clean bin include data ${wifi_all}
+.PHONY: all clean bin include data ${net_all}
 
-${wifi_bin}:
+${net_bin}:
 	${MAKE} -C src ${@F}
 	@cp -ulf $(BIN_PATH)/${@F} $@
 
-${wifi_lib}:
+${net_lib}:
 	${MAKE} -C src ${@F}
 	@cp -ulf $(LIB_PATH)/${@F} $@
 
-${wifi_include}:
+${net_include}:
 	cp -ln -t ${@D} $(addprefix src/include/, ${@F})

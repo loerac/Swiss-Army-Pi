@@ -1,13 +1,11 @@
-CC=gcc
-TARGET=../bin/wifi
-CFLAGS=-Wall -Werror
-SOURCES=$(wildcard *.c)
-OBJECTS=$(patsubst %.c, %.o, $(SOURCES))
-LIBS=
-CFL=$(CFLAGS) $(LIBS)
+.PHONY: all
 
-all: $(OBJECTS)
-	$(CC) -o $(TARGET) $(OBJECTS) $(CFL)
-
+.PHONY: clean
 clean:
-	rm -rf $(OBJECTS)
+	rm -rf ${BIN_PATH}
+	rm -rf ${LIB_PATH}
+	${MAKE} -C service $@
+
+.PHONY: wifi
+wifi:
+	${MAKE} -C service all

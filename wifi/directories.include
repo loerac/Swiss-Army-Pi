@@ -1,0 +1,5 @@
+
+EXTRACFLAGS += -I$(TOPDIR)/wifi/include \
+               -I$(SRC_BASE) \
+               -I$(SRC_BASE)/include \
+               -I$(SRC_BASE)/service \

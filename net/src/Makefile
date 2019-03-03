@@ -9,3 +9,7 @@ clean:
 .PHONY: net
 net:
 	${MAKE} -C service all
+
+.PHONY: libnet.so
+libnet.so:
+	${MAKE} -C api all

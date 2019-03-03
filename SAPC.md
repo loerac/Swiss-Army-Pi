@@ -1,3 +1,5 @@
+# JSON City Configuration multi call methods
+
 ### Synopsis
 Users can add multiple methods to call the weather with their location. Store the call method with the size of the location and call method. This could be done by adding the locations call methods into a linked list or into a struct with all the call methods. 
 

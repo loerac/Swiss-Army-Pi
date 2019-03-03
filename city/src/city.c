@@ -7,7 +7,6 @@
 #include "city_types.h"
 
 #define CITY_CUSTOM "/custom/city/city.json"
-#define CITY_SCHEMA "data/city_schema.json"
 
 static url_sts  url = { '\0' };
 static city_map map = { '\0' };
@@ -16,16 +15,9 @@ city_init cityInit( void ) {
     bool failed = false;
     city_init status = CITY_OK;
 
-    failed = fileProcess(CITY_CUSTOM, CITY_SCHEMA);
+    failed = city_config(CITY_CUSTOM);
     if (failed) {
         status = CITY_FILE_PROCESS_NOK;
-        goto exit;
-    }
-
-    failed = customParse(&url);
-    if (failed) {
-        status = CITY_PARSE_CUSTOM_NOK;
-        printf("Failed to parse custom file\n");
         goto exit;
     }
 
@@ -50,9 +42,8 @@ int main(int argc, char *argv[]) {
     city_init status = cityInit();
     if (status != CITY_OK) {
         printf("Initializing the city failed - status(%d)\n", status);
-        goto exit;
+        failed = false;
     }
 
-exit:
     return failed;
 }

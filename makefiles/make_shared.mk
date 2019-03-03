@@ -2,19 +2,8 @@
 CC=gcc
 CFLAGS+=$(EXTRACFLAGS)
 
-LINKFLAGS+=$(OS_CFLAGS) \
-          $(EXTERNAL_LFLAGS) \
-          $(EXTRALINKFLAGS) \
-          $(LINKDEBUG) \
-          -L$(LIB_PATH) \
-          $(LIBS_ENTRY) \
-          $(EXTRALIBS) \
-          $(PROFILEFLAG)\
-          $(STDLIBS) \
-          $(OS_LFLAGS)
-
-#LINKFLAGS+=$(EXTRALIBS) \
-#	-L$(LIB_PATH)
+LINKFLAGS+=$(EXTRALIBS) \
+          $(LIBS_ENTRY)
 
 COMMON_CFLAGS= -Wall -Werror
 -include $(OFILES:.o=.d)
@@ -29,9 +18,6 @@ all: $(TARGET)
 .PHONY: clean
 clean:
 	-rm -f *.o *.a *.d
-#ifneq "$(TARGET)" ""
-#	-rm -f $(TARGET)$(EXEC_EXT) $(TARGET)-unstripped$(EXEC_EXT) $(TARGET)-with-debug-on$(EXEC_EXT) $(TARGET).map $(TARGET)$(SHARED_EXT) $(TARGET)-unstripped$(SHARED_EXT)
-#endif
 
 $(TARGET).object: $(OFILES)
 

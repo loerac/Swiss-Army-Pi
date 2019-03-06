@@ -7,7 +7,7 @@
 
 #include "city.h"
 #include "city_types.h"
-#include "city_config.h"
+#include "city_custom.h"
 
 bool city_coords(json_object *jb, const char *const k) {
    bool ok = true;
@@ -62,7 +62,7 @@ bool city_region(json_object *jb, const char *const k) {
    return ok;
 }
 
-bool city_config(const char *const json) {
+bool city_custom(const char *const json) {
    bool ok = true;
    json_object *obj = json_object_from_file(json);
    if (NULL != obj) {

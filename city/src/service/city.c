@@ -4,7 +4,7 @@
 #include "city_curl.h"
 #include "city_parse.h"
 #include "city_types.h"
-#include "city_config.h"
+#include "city_custom.h"
 
 #define CITY_CUSTOM "/custom/city/city.json"
 
@@ -15,7 +15,7 @@ city_init cityInit( void ) {
     bool failed = false;
     city_init status = CITY_OK;
 
-    failed = city_config(CITY_CUSTOM);
+    failed = city_custom(CITY_CUSTOM);
     if (failed) {
         status = CITY_FILE_PROCESS_NOK;
         goto exit;

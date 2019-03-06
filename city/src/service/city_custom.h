@@ -3,6 +3,6 @@
 
 #include <stdbool.h>
 
-bool city_config(const char *const json);
+bool city_custom(const char *const json);
 
 #endif

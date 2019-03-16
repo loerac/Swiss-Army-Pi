@@ -10,11 +10,18 @@ typedef enum city_init_s {
     CITY_WEATHER_URL_NOK
 } city_init;
 
-typedef enum city_search_s {
-    CITY_ID = 1,
-    CITY_NAME = 2,
-    CITY_ZIP = 4,
-    CITY_COORD = 8
-} city_search;
+typedef enum city_search_e {
+    CITY_SEARCH_NONE = 0,
+    CITY_SEARCH_ID = 1,
+    CITY_SEARCH_NAME = 2,
+    CITY_SEARCH_ZIP = 4,
+    CITY_SEARCH_COORD = 8
+} city_search_e;
+
+typedef enum city_format_e {
+    CITY_FORMAT_NONE = 0,
+    CITY_FORMAT_LANG = 1,
+    CITY_FORMAT_UNIT = 2
+} city_format_e;
 
 #endif

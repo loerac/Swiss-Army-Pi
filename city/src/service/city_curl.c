@@ -61,17 +61,7 @@ exit:
 }
 
 bool findBy(char *gb, const url_sts *url) {
-    if ((url->find_by & CITY_ID) == CITY_ID) {
-        (void)snprintf(gb, MAX_GETBY_METHOD, "id=%s", url->id);
-    } else if ((url->find_by & CITY_ZIP) == CITY_ZIP) {
-        (void)snprintf(gb, MAX_GETBY_METHOD, "zip=%s", url->zip);
-    } else if ((url->find_by & CITY_NAME) == CITY_NAME) {
-        (void)snprintf(gb, BUFSIZ, "q=%s,%s", url->city, url->country);
-    } else if ((url->find_by & CITY_COORD) == CITY_COORD) {
-        (void)snprintf(gb, MAX_GETBY_METHOD, "lat=%s&log%s", url->lat, url->lon);
-    }
-
-    return url->find_by;
+   // TODO: Change find method
 }
 
 bool weatherURL(const url_sts *url) {

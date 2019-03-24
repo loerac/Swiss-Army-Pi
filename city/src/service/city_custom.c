@@ -11,7 +11,23 @@
 static city_list_s *format_list = NULL;
 static city_list_s *location_list = NULL;
 
-static bool add_format(const char *const data, const int size, city_format_e format) {
+/**********************************************
+ * INPUT:
+ *    data
+ *       Format string
+ *    size
+ *       Data string size
+ *    format
+ *       Foramat type
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if a new format is added to the
+ *    linked list, else false
+ * DESCRIPTION:
+ *    Add a format to the linked list
+ **********************************************/
+static bool add_format(const char *const data, const int size, const city_format_e format) {
    bool ok = false;
    city_format_s *const city = (city_format_s*)malloc(sizeof(city_format_s));
 
@@ -28,7 +44,23 @@ static bool add_format(const char *const data, const int size, city_format_e for
    return ok;
 }
 
-static bool add_location(const char *const data, const int size, city_search_e search) {
+/**********************************************
+ * INPUT:
+ *    data
+ *       Search location string
+ *    size
+ *       Data string size
+ *    search
+ *       Search location type
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if a new search location is added to
+ *    the linked list, else false
+ * DESCRIPTION:
+ *    Add a search location to the linked list
+ **********************************************/
+static bool add_location(const char *const data, const int size, const city_search_e search) {
    bool ok = false;
    city_search_s *const city = (city_search_s*)malloc(sizeof(city_search_s));
 
@@ -45,14 +77,25 @@ static bool add_location(const char *const data, const int size, city_search_e s
    return ok;
 }
 
-static bool city_coords(json_object *jb, const char *const k) {
+/**********************************************
+ * INPUT:
+ *    jb
+ *       JSON object pointing to current location
+ *    jb_key
+ *       Key from previous JSON array
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if valid, else false
+ * DESCRIPTION:
+ *    Parses the city coordinates
+ **********************************************/
+static bool city_coords(json_object *jb, const char *const jb_key) {
    bool ok = true;
    const char *lon = NULL;
    const char *lat = NULL;
-   //char lon[MAX_COORDINATES_LEN] = {0};
-   //char lat[MAX_COORDINATES_LEN] = {0};
 
-   json_object *new_obj = json_object_object_get(jb, k);
+   json_object *new_obj = json_object_object_get(jb, jb_key);
    json_object_object_foreach(new_obj, key, val) {
       if (strncmp(key, "lon", sizeof("lon")) == 0) {
          lon = json_object_get_string(val);
@@ -73,10 +116,27 @@ static bool city_coords(json_object *jb, const char *const k) {
    return ok;
 }
 
-static bool city_zone(json_object *jb, const char *const k, const char **zone, city_search_e *search) {
+/**********************************************
+ * INPUT:
+ *    jb
+ *       JSON object pointing to current location
+ *    jb_key
+ *       Key from previous JSON array
+ * OUTPUT:
+ *    zone
+ *       City name or zipcode
+ *    search
+ *       Search type updated
+ * RETURN:
+ *    True if valid, else false
+ * DESCRIPTION:
+ *    Parses the city zone
+ **********************************************/
+static bool city_zone(json_object *jb, const char *const jb_key,
+                      const char **zone, city_search_e *search) {
    bool ok = true;
 
-   json_object *new_object = json_object_object_get(jb, k);
+   json_object *new_object = json_object_object_get(jb, jb_key);
    json_object_object_foreach(new_object, key, val) {
       if (strncmp(key, "name", sizeof("name")) == 0) {
          *zone = json_object_get_string(val);
@@ -93,13 +153,26 @@ static bool city_zone(json_object *jb, const char *const k, const char **zone, c
    return ok;
 }
 
-static bool city_region(json_object *jb, const char *const k) {
+/**********************************************
+ * INPUT:
+ *    jb
+ *       JSON object pointing to current location
+ *    jb_key
+ *       Key from previous JSON array
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if valid, else false
+ * DESCRIPTION:
+ *    Parses the city region
+ **********************************************/
+static bool city_region(json_object *jb, const char *const jb_key) {
    bool ok = true;
    const char *zone = NULL;
    const char *country = NULL;
    city_search_e search = CITY_SEARCH_NONE;
 
-   json_object *new_object = json_object_object_get(jb, k);
+   json_object *new_object = json_object_object_get(jb, jb_key);
    json_object_object_foreach(new_object, key, val) {
       if (strncmp(key, "country", sizeof("country")) == 0) {
          country = json_object_get_string(val);
@@ -120,6 +193,9 @@ static bool city_region(json_object *jb, const char *const k) {
    return ok;
 }
 
+/**********************************************
+ * See city_custom.h for description.
+ **********************************************/
 bool city_city_custom(const char *const json) {
    int size = 0;
    bool ok = false;
@@ -155,6 +231,9 @@ bool city_city_custom(const char *const json) {
    return ok;
 }
 
+/**********************************************
+ * See city_custom.h for description.
+ **********************************************/
 bool city_url_custom(const char *const json, url_config_s *url) {
    bool ok = true;
 
@@ -175,10 +254,16 @@ bool city_url_custom(const char *const json, url_config_s *url) {
    return ok;
 }
 
+/**********************************************
+ * See city_custom.h for description.
+ **********************************************/
 city_list_s *get_format( void ) {
    return format_list;
 }
 
+/**********************************************
+ * See city_custom.h for description.
+ **********************************************/
 city_list_s *get_location( void ) {
    return location_list;
 }

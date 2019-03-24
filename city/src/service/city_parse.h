@@ -6,6 +6,17 @@
 #include "city.h"
 #include "city_types.h"
 
-bool jsonConfig(city_map *m);
+/**********************************************
+ * INTPUT:
+ *    NONE
+ * OUTPUT:
+ *    map
+ *       Store data retrieved
+ * RETURN:
+ *    True if data was valid, else false.
+ * DESCRIPTION:
+ *    Parses the returned data from https://openweathermap.org/
+ **********************************************/
+bool jsonConfig(city_map_s *map);
 
 #endif

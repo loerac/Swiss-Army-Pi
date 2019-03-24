@@ -1,46 +1,64 @@
+#include <string.h>
 #include <stdbool.h>
 
 #include "city.h"
 #include "city_curl.h"
 #include "city_parse.h"
 #include "city_types.h"
-#include "city_config.h"
+#include "city_custom.h"
 
-#define CITY_CUSTOM "/custom/city/city.json"
+#define CITY_CUSTOM  "/custom/city/city.json"
+#define CITY_URL     "/custom/city/url.json"
 
-static url_sts  url = { '\0' };
-static city_map map = { '\0' };
+static url_config_s url = {0};
+static city_map_s map = {0};
 
-city_init cityInit( void ) {
-    bool failed = false;
-    city_init status = CITY_OK;
+/**********************************************
+ * INPUT:
+ *    NONE
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    CITY_OK on success.
+ *    On failure, the status is set
+ * DESCRIPTION:
+ *    Configures the URL and MAP of the city.
+ **********************************************/
+city_init_e cityInit( void ) {
+   bool ok = true;
+   city_init_e status = CITY_OK;
 
-    failed = city_config(CITY_CUSTOM);
-    if (failed) {
-        status = CITY_FILE_PROCESS_NOK;
-        goto exit;
-    }
+   ok = city_city_custom(CITY_CUSTOM);
+   if (ok) {
+      ok = city_url_custom(CITY_URL, &url);
+   } else {
+      status = CITY_CITY_CUSTOM;
+   }
 
-    failed = weatherURL(&url);
-    if (failed) {
-        status = CITY_WEATHER_URL_NOK;
-        goto exit;
-    }
+   if (ok) {
+      ok = weatherURL(&url);
+   } else {
+      status = CITY_URL_CUSTOM;
+   }
 
-    failed = jsonConfig(&map);
-    if (failed) {
-        goto exit;
-    }
+   if (ok) {
+      ok = jsonConfig(&map);
+   } else {
+      status = CITY_WEATHER_URL;
+   }
 
-exit:
-    return status;
+   if (!ok) {
+      status = CITY_WEATHER_PARSE;
+   }
+
+   return status;
 }
 
 int main(int argc, char *argv[]) {
     bool failed = true;
 
-    city_init status = cityInit();
-    if (status != CITY_OK) {
+    city_init_e status = cityInit();
+    if (CITY_OK != status) {
         printf("Initializing the city failed - status(%d)\n", status);
         failed = false;
     }

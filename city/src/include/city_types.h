@@ -3,15 +3,15 @@
 
 #include <stdio.h>
 
-typedef enum city_init_s {
+typedef enum city_init {
    CITY_OK = 0,
-   CITY_FILE_PROCESS,
-   CITY_PARSE_CUSTOM,
+   CITY_CITY_CUSTOM,
+   CITY_URL_CUSTOM,
    CITY_WEATHER_URL,
    CITY_WEATHER_PARSE
-} city_init;
+} city_init_e;
 
-typedef enum city_search_e {
+typedef enum city_search {
    CITY_SEARCH_NONE = 0,
    CITY_SEARCH_ID = 1,
    CITY_SEARCH_NAME = 2,
@@ -19,7 +19,7 @@ typedef enum city_search_e {
    CITY_SEARCH_COORD = 8
 } city_search_e;
 
-typedef enum city_format_e {
+typedef enum city_format {
    CITY_FORMAT_NONE = 0,
    CITY_FORMAT_LANG = 1,
    CITY_FORMAT_UNIT = 2

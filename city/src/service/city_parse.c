@@ -221,11 +221,13 @@ bool jsonSys(json_object *jb, city_map *m) {
 
 bool jsonConfig(city_map *m) {
    bool ok = false;
-   char *city_data = getCityInfo().data;
-   if (city_data == NULL) {
+   city_info info = getCityInfo();
+
+   if (  (!info.valid) ||
+         (info.data == NULL) ) {
       printf("No data available\n");
    } else {
-      json_object *obj = json_tokener_parse(city_data);
+      json_object *obj = json_tokener_parse(info.data);
       json_object_object_foreach(obj, key, val) {
          if (strncmp(key, "coord", sizeof("coord")) == 0) {
             json_object *new_obj = json_object_object_get(obj, key);
@@ -266,6 +268,7 @@ bool jsonConfig(city_map *m) {
          }
       }
    }
+   destroyCity();
 
    return ok;
 }

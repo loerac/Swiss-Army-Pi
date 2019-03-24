@@ -27,26 +27,26 @@
 #define MAX_BASE_PAR_LEN         64U
 #define MAX_CITY_NAME_LEN        256U
 
-typedef struct url_sts_s {
+typedef struct url_config {
    char url[MAX_URL_LEN + 1];
    char key[MAX_KEY_LEN + 1];
    char search[MAX_LOCATION_LEN + 1];
    char format[MAX_FORMAT_LEN + 1];
-} url_sts;
+} url_config_s;
 
-typedef struct city_coord_s {
+typedef struct city_coord {
    float lon;
    float lat;
-} city_coord;
+} city_coord_s;
 
-typedef struct city_weather_s {
+typedef struct city_weather {
    int id;
    char main[MAX_WEATHER_PAR_LEN];
    char desc[MAX_WEATHER_DESC_LEN];
    char icon[MAX_ICON_ID_LEN];
-} city_weather;
+} city_weather_s;
 
-typedef struct city_main_s {
+typedef struct city_main {
    float temp;
    float pressure;
    float humidity;
@@ -54,56 +54,56 @@ typedef struct city_main_s {
    float low;
    float sea_level;
    float grnd_level;
-} city_main;
+} city_main_s;
 
-typedef struct city_wind_s {
+typedef struct city_wind {
    float speed;
    float deg;
    float gust;
-} city_wind;
+} city_wind_s;
 
-typedef struct city_clouds_s {
+typedef struct city_clouds {
    int all;
-} city_cloud;
+} city_cloud_s;
 
-typedef struct city_rain_s {
+typedef struct city_rain {
    float hour_1;
    float hour_2;
-} city_rain;
+} city_rain_s;
 
-typedef struct city_snow_s {
+typedef struct city_snow {
    float hour_1;
    float hour_2;
-} city_snow;
+} city_snow_s;
 
-typedef struct city_sys_s {
+typedef struct city_sys {
    int id;
    int type;
    char message[MAX_MESSAGE_SIZE_LEN];
    char country[MAX_COUNTRY_CODE_LEN];
    char sunrise[MAX_SUN_RISE_SET_LEN];
    char sunset[MAX_SUN_RISE_SET_LEN];
-} city_sys;
+} city_sys_s;
 
-typedef struct city_misc_s {
+typedef struct city_misc {
    char base[MAX_BASE_PAR_LEN];
    float visibility;
    long dt;
    long id;
    char name[MAX_CITY_NAME_LEN];
    long cod;
-} city_misc;
+} city_misc_s;
 
-typedef struct city_map_s {
-   city_coord      coord;
-   city_weather    weather[MAX_WEATHER_TOTAL];
-   city_main       main;
-   city_wind       wind;
-   city_cloud      cloud;
-   city_rain       rain;
-   city_snow       snow;
-   city_sys        sys;
-   city_misc       misc;
-} city_map;
+typedef struct city_map {
+   city_coord_s    coord;
+   city_weather_s  weather[MAX_WEATHER_TOTAL];
+   city_main_s     main;
+   city_wind_s     wind;
+   city_cloud_s    cloud;
+   city_rain_s     rain;
+   city_snow_s     snow;
+   city_sys_s      sys;
+   city_misc_s     misc;
+} city_map_s;
 
 #endif

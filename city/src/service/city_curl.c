@@ -10,6 +10,27 @@
 static char url_str[512U] = {0};
 static city_info city = { '\0' };
 
+/**********************************************
+ * INPUT:
+ *    contents
+ *       Data retreived from cURL operation
+ *    size
+ *       Alwasy one (1)
+ *    nmemb
+ *       Size of the 'contents'
+ * OUTPUT:
+ *    userp
+ *       Pointer to where the data is being written
+ * RETURN:
+ *    Total size of the 'contents'
+ * DESCRIPTION:
+ *    Call back function from cURL:
+ *       https://curl.haxx.se/libcurl/c/getinmemory.html
+ *
+ *    Shows how the write callback function can
+ *    be used to download data into a chunk of
+ *    memory instead of storing it in a file.
+ **********************************************/
 static size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
    size_t realsize = size * nmemb;
    city_info *tmp_city= (city_info *)userp;
@@ -28,6 +49,17 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb, void *us
    return realsize;
 }
 
+/**********************************************
+ * INPUT:
+ *    NONE
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if the URL is configured, else false.
+ * DESCRIPTION:
+ *    Configures the URL from the city.json and
+ *    the url.json customization file.
+ **********************************************/
 static bool url_configuration(const url_sts *url) {
    bool ok = false;
    city_list_s *format_list = get_format();
@@ -42,13 +74,15 @@ static bool url_configuration(const url_sts *url) {
          format_list = city_list_next(format_list);
       }
       (void)snprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", url->url, search->data, format_str, url->key, '\0');
-      printf("url_str: %s\n", url_str);
       ok = true;
    }
 
    return ok;
 }
 
+/**********************************************
+ * See city_curl.h for description.
+ **********************************************/
 bool weatherURL(const url_sts *url) {
    CURLcode res;
    CURL *curl_handle;
@@ -76,17 +110,22 @@ bool weatherURL(const url_sts *url) {
       curl_easy_cleanup(curl_handle);
       ok = true;
    }
-
    curl_global_cleanup();
 
    return ok;
 }
 
 
+/**********************************************
+ * See city_curl.h for description.
+ **********************************************/
 const city_info getCityInfo( void ) {
    return city;
 }
 
+/**********************************************
+ * See city_curl.h for description.
+ **********************************************/
 void destroyCity( void ) {
    city.size = 0;
    if ( city.data[0] != '\0' ) {

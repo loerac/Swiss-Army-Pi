@@ -17,6 +17,6 @@
  * DESCRIPTION:
  *    Parses the returned data from https://openweathermap.org/
  **********************************************/
-bool jsonConfig(city_map *map);
+bool jsonConfig(city_map_s *map);
 
 #endif

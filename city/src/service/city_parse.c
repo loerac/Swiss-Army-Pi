@@ -37,7 +37,7 @@ static void timeToChar(time_t unix_time, char *military_time, size_t size) {
  * DESCRIPTION:
  *    Parses the city coordinates
  **********************************************/
-static bool jsonCoord(json_object *jb, city_map *map) {
+static bool jsonCoord(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Coord:\n");
    json_object_object_foreach(jb, key, val) {
@@ -69,7 +69,7 @@ static bool jsonCoord(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city main information
  **********************************************/
-static bool jsonMain(json_object *jb, city_map *map) {
+static bool jsonMain(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Main:\n");
    json_object_object_foreach(jb, key, val) {
@@ -108,6 +108,8 @@ static bool jsonMain(json_object *jb, city_map *map) {
  * INPUT:
  *    jb
  *       JSON object pointing to current location
+ *    jb_key
+ *       Key from previous JSON array
  * OUTPUT:
  *    map
  *       Store city info
@@ -116,12 +118,12 @@ static bool jsonMain(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city weather information
  **********************************************/
-static bool jsonWeather(json_object *jb, city_map *map, const char *const k) {
+static bool jsonWeather(json_object *jb, city_map_s *map, const char *const jb_key) {
    bool ok = true;
    printf("Weather:\n");
    json_object *jarray = jb;
-   if (k != NULL) {
-      json_object_object_get(jb, k);
+   if (jb_key != NULL) {
+      json_object_object_get(jb, jb_key);
    }
 
    unsigned int i;
@@ -168,7 +170,7 @@ static bool jsonWeather(json_object *jb, city_map *map, const char *const k) {
  * DESCRIPTION:
  *    Parses the city wind information
  **********************************************/
-static bool jsonWind(json_object *jb, city_map *map) {
+static bool jsonWind(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Wind:\n");
    json_object_object_foreach(jb, key, val) {
@@ -203,7 +205,7 @@ static bool jsonWind(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city cloud information
  **********************************************/
-static bool jsonCloud(json_object *jb, city_map *map) {
+static bool jsonCloud(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Cloud:\n");
    json_object_object_foreach(jb, key, val) {
@@ -232,7 +234,7 @@ static bool jsonCloud(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city rain information
  **********************************************/
-static bool jsonRain(json_object *jb, city_map *map) {
+static bool jsonRain(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Rain:\n");
    json_object_object_foreach(jb, key, val) {
@@ -264,7 +266,7 @@ static bool jsonRain(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city snow information
  **********************************************/
-static bool jsonSnow(json_object *jb, city_map *map) {
+static bool jsonSnow(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Snow:\n");
    json_object_object_foreach(jb, key, val) {
@@ -296,7 +298,7 @@ static bool jsonSnow(json_object *jb, city_map *map) {
  * DESCRIPTION:
  *    Parses the city system information
  **********************************************/
-static bool jsonSys(json_object *jb, city_map *map) {
+static bool jsonSys(json_object *jb, city_map_s *map) {
    bool ok = true;
    json_object_object_foreach(jb, key, val) {
       if (strncmp(key, "type", sizeof("type")) == 0) {
@@ -330,9 +332,9 @@ static bool jsonSys(json_object *jb, city_map *map) {
 /**********************************************
  * See city_parse.h for description.
  **********************************************/
-bool jsonConfig(city_map *map) {
+bool jsonConfig(city_map_s *map) {
    bool ok = false;
-   city_info info = getCityInfo();
+   city_info_s info = getCityInfo();
 
    if (  (!info.valid) ||
          (info.data == NULL) ) {

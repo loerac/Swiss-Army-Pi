@@ -6,11 +6,11 @@
 
 #include "city.h"
 
-typedef struct city_info_s {
+typedef struct city_info {
     size_t size;
     char *data;
     bool valid;
-} city_info;
+} city_info_s;
 
 /**********************************************
  * INPUT:
@@ -23,7 +23,7 @@ typedef struct city_info_s {
  * DESCRIPTION:
  *    Retrieves the data from https://openweathermap.org
  **********************************************/
-bool weatherURL(const url_sts *url);
+bool weatherURL(const url_config_s *url);
 
 /**********************************************
  * INPUT:
@@ -36,7 +36,7 @@ bool weatherURL(const url_sts *url);
  * DESCRIPTION:
  *    See RETURN for description.
  **********************************************/
-const city_info getCityInfo( void );
+const city_info_s getCityInfo( void );
 
 /**********************************************
  * INPUT:

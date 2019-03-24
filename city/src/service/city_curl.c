@@ -8,7 +8,7 @@
 #include "city_custom.h"
 
 static char url_str[512U] = {0};
-static city_info city = { '\0' };
+static city_info_s city = { '\0' };
 
 /**********************************************
  * INPUT:
@@ -33,7 +33,7 @@ static city_info city = { '\0' };
  **********************************************/
 static size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
    size_t realsize = size * nmemb;
-   city_info *tmp_city= (city_info *)userp;
+   city_info_s *tmp_city= (city_info_s *)userp;
    char *ptr = realloc(tmp_city->data, tmp_city->size + realsize + 1);
 
    if (NULL == ptr) {
@@ -60,7 +60,7 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb, void *us
  *    Configures the URL from the city.json and
  *    the url.json customization file.
  **********************************************/
-static bool url_configuration(const url_sts *url) {
+static bool url_configuration(const url_config_s *url) {
    bool ok = false;
    city_list_s *format_list = get_format();
    city_list_s *search_list = get_location();
@@ -74,6 +74,7 @@ static bool url_configuration(const url_sts *url) {
          format_list = city_list_next(format_list);
       }
       (void)snprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", url->url, search->data, format_str, url->key, '\0');
+      printf("URL STRING: %s\n", url_str);
       ok = true;
    }
 
@@ -83,7 +84,7 @@ static bool url_configuration(const url_sts *url) {
 /**********************************************
  * See city_curl.h for description.
  **********************************************/
-bool weatherURL(const url_sts *url) {
+bool weatherURL(const url_config_s *url) {
    CURLcode res;
    CURL *curl_handle;
    bool ok = false;
@@ -93,24 +94,25 @@ bool weatherURL(const url_sts *url) {
    * search location type, any format type,
    * and the API key.
    */
-   url_configuration(url);
+   if (url_configuration(url)) {
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl_handle = curl_easy_init();
 
-   curl_global_init(CURL_GLOBAL_ALL);
-   curl_handle = curl_easy_init();
+      curl_easy_setopt(curl_handle, CURLOPT_URL, url_str);
+      curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+      curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&city);
+      curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+      res = curl_easy_perform(curl_handle);
 
-   curl_easy_setopt(curl_handle, CURLOPT_URL, url_str);
-   curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
-   curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&city);
-   curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
-   res = curl_easy_perform(curl_handle);
-
-   if (res != CURLE_OK) {
-      printf("ERR: curl_easy_perform() failed - error(%s)\n", curl_easy_strerror(res));
-   } else {
-      curl_easy_cleanup(curl_handle);
-      ok = true;
+      if (res != CURLE_OK) {
+         printf("ERR: curl_easy_perform() failed - error(%s)\n", curl_easy_strerror(res));
+      } else {
+         curl_easy_cleanup(curl_handle);
+         ok = true;
+      }
+      city.valid = ok;
+      curl_global_cleanup();
    }
-   curl_global_cleanup();
 
    return ok;
 }
@@ -119,7 +121,7 @@ bool weatherURL(const url_sts *url) {
 /**********************************************
  * See city_curl.h for description.
  **********************************************/
-const city_info getCityInfo( void ) {
+const city_info_s getCityInfo( void ) {
    return city;
 }
 
@@ -127,8 +129,9 @@ const city_info getCityInfo( void ) {
  * See city_curl.h for description.
  **********************************************/
 void destroyCity( void ) {
-   city.size = 0;
    if ( city.data[0] != '\0' ) {
       free(city.data);
    }
+   city.size = 0;
+   city.valid = false;
 }

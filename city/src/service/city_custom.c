@@ -120,9 +120,9 @@ static bool city_region(json_object *jb, const char *const k) {
    return ok;
 }
 
-bool city_custom(const char *const json) {
-   bool ok = true;
+bool city_city_custom(const char *const json) {
    int size = 0;
+   bool ok = false;
    char loc[MAX_LOCATION_LEN] = {0};
    char format[MAX_FORMAT_LEN] = {0};
 
@@ -148,8 +148,28 @@ bool city_custom(const char *const json) {
          }
       }
    } else {
-      ok = true;
+      ok = false;
       printf("Reading JSON '%s' failed - (error=%m)\n", json);
+   }
+
+   return ok;
+}
+
+bool city_url_custom(const char *const json, url_config_s *url) {
+   bool ok = true;
+
+   json_object *obj = json_object_from_file(json);
+   if (NULL != obj) {
+      json_object_object_foreach(obj, key, val) {
+         if (0 == strncmp(key, "url", sizeof("url"))) {
+            (void)strncpy(url->url, json_object_get_string(val), sizeof(url->url));
+         } else if (0 == strncmp(key, "key", sizeof("key"))) {
+            (void)strncpy(url->key, json_object_get_string(val), sizeof(url->key));
+         } else {
+            ok = false;
+            printf("Unknown key: %s\n", key);
+         }
+      }
    }
 
    return ok;

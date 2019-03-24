@@ -8,18 +8,20 @@
 #include "city.h"
 #include "city_custom.h"
 
-#define MAX_LOCATION_LEN   512U
-#define MAX_FORMAT_LEN     128U
+static city_list_s *format_list = NULL;
+static city_list_s *location_list = NULL;
 
 static bool add_format(const char *const data, const int size, city_format_e format) {
    bool ok = false;
    city_format_s *const city = (city_format_s*)malloc(sizeof(city_format_s));
+
    if (NULL == city) {
       printf("EMERG: Allocating memory failed - error(%m)\n");
    } else {
-      city->data = data;
+      (void)strncpy(city->data, data, sizeof(city->data));
       city->size = size;
       city->format = format;
+      format_list = city_list_add(format_list, city);
       ok = true;
    }
 
@@ -33,9 +35,10 @@ static bool add_location(const char *const data, const int size, city_search_e s
    if (NULL == city) {
       printf("EMERG: Allocating memory failed - error(%m)\n");
    } else {
-      city->data = data;
+      (void)strncpy(city->data, data, sizeof(city->data));
       city->size = size;
       city->search = search;
+      location_list = city_list_add(location_list, city);
       ok = true;
    }
 
@@ -44,8 +47,10 @@ static bool add_location(const char *const data, const int size, city_search_e s
 
 static bool city_coords(json_object *jb, const char *const k) {
    bool ok = true;
-   const char *lat = NULL;
    const char *lon = NULL;
+   const char *lat = NULL;
+   //char lon[MAX_COORDINATES_LEN] = {0};
+   //char lat[MAX_COORDINATES_LEN] = {0};
 
    json_object *new_obj = json_object_object_get(jb, k);
    json_object_object_foreach(new_obj, key, val) {
@@ -68,20 +73,16 @@ static bool city_coords(json_object *jb, const char *const k) {
    return ok;
 }
 
-static bool city_zone(json_object *jb, const char *const k, char **const zone, city_search_e *search) {
+static bool city_zone(json_object *jb, const char *const k, const char **zone, city_search_e *search) {
    bool ok = true;
-   size_t size = 0;
-   const char *outcome = NULL;
 
    json_object *new_object = json_object_object_get(jb, k);
    json_object_object_foreach(new_object, key, val) {
       if (strncmp(key, "name", sizeof("name")) == 0) {
-         outcome = json_object_get_string(val);
-         size = strlen(json_object_get_string(val)) + 1;
+         *zone = json_object_get_string(val);
          *search = CITY_SEARCH_NAME;
       } else if (strncmp(key, "zipcode", sizeof("zipcode")) == 0) {
-         outcome = json_object_get_string(val);
-         size = strlen(json_object_get_string(val)) + 1;
+         *zone = json_object_get_string(val);
          *search = CITY_SEARCH_ZIP;
       } else {
          ok = false;
@@ -89,17 +90,12 @@ static bool city_zone(json_object *jb, const char *const k, char **const zone, c
       }
    }
 
-   if (NULL != outcome) {
-      *zone = (char *const)malloc(size);
-      (void)snprintf(*zone, size, "%s", outcome);
-   }
-
    return ok;
 }
 
 static bool city_region(json_object *jb, const char *const k) {
    bool ok = true;
-   char *zone = NULL;
+   const char *zone = NULL;
    const char *country = NULL;
    city_search_e search = CITY_SEARCH_NONE;
 
@@ -127,8 +123,8 @@ static bool city_region(json_object *jb, const char *const k) {
 bool city_custom(const char *const json) {
    bool ok = true;
    int size = 0;
-   char loc[MAX_FORMAT_LEN] = {0};
    char loc[MAX_LOCATION_LEN] = {0};
+   char format[MAX_FORMAT_LEN] = {0};
 
    json_object *obj = json_object_from_file(json);
    if (NULL != obj) {
@@ -137,23 +133,32 @@ bool city_custom(const char *const json) {
             size = snprintf(loc, sizeof(loc), "id=%s%c", json_object_get_string(val), '\0');
             add_location(loc, size, CITY_SEARCH_ID);
          } else if (strncmp(key, "language", sizeof("language")) == 0) {
-            size = snprintf(loc, sizeof(loc), "&lang=%s%c", json_object_get_string(val), '\0');
-            add_format(loc, size, CITY_FORMAT_LANG);
+            size = snprintf(format, sizeof(format), "&lang=%s%c", json_object_get_string(val), '\0');
+            add_format(format, size, CITY_FORMAT_LANG);
          } else if (strncmp(key, "units", sizeof("units")) == 0) {
-            size = snprintf(loc, sizeof(loc), "&units=%s%c", json_object_get_string(val), '\0');
-            add_format(loc, size, CITY_FORMAT_UNIT);
+            size = snprintf(format, sizeof(format), "&units=%s%c", json_object_get_string(val), '\0');
+            add_format(format, size, CITY_FORMAT_UNIT);
          } else if (strncmp(key, "region", sizeof("region")) == 0) {
             ok = city_region(obj, key);
          } else if (strncmp(key, "coord", sizeof("coord")) == 0) {
             ok = city_coords(obj, key);
          } else {
-            ok = false;
+            ok = true;
             printf("Unknown key: %s\n", key);
          }
       }
    } else {
-      ok = false;
+      ok = true;
       printf("Reading JSON '%s' failed - (error=%m)\n", json);
    }
+
    return ok;
+}
+
+city_list_s *get_format( void ) {
+   return format_list;
+}
+
+city_list_s *get_location( void ) {
+   return location_list;
 }

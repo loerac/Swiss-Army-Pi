@@ -3,6 +3,6 @@
 
 #include <stdbool.h>
 
-const bool has_internet_access( void );
+const bool net_internet_avail( void );
 
 #endif /* _NET_API_H_ */

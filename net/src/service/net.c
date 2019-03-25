@@ -9,75 +9,96 @@
 #include <sys/socket.h>
 #include <linux/wireless.h>
 
-#define MAX_MAC_SIZE    18U
-#define MAX_SSID_LENGTH 33U
+#include "net.h"
+#include "net_api.h"
 
-typedef struct signal_info_s {
-   int level;
-   int bit_rate;
-   char mac[MAX_MAC_SIZE];
-   char ssid[MAX_SSID_LENGTH];
-} signal_info;
+static bool internet_avail = false;
 
-bool check_wireless(const char* ifname, char* protocol) {
+/**********************************************
+ * INPUT:
+ *    ifname
+ *       Interface name found
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True on a valid wireless name, else false
+ * DESCRIPTION:
+ *    Check if the interface name is a value of
+ *    the Wireless Extensions
+ **********************************************/
+static bool validWireless(const char *const ifname) {
    int sock = -1;
    struct iwreq pwrq;
-   bool failed = true;
-   memset(&pwrq, 0, sizeof(pwrq));
+   bool ok = false;
+   (void)memset(&pwrq, 0, sizeof(pwrq));
    (void)strncpy(pwrq.ifr_name, ifname, IFNAMSIZ);
 
    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
-      printf("Failed to create socket - error(%m)\n");
-      goto exit;
-   }
-
-   if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
-      if (protocol[0] != '\0') {
-          (void)strncpy(protocol, pwrq.u.name, IFNAMSIZ);
-      }
+      printf("ERR: Failed to create socket - error(%m)\n");
+   } else if (ioctl(sock, SIOCGIWNAME, &pwrq) != -1) {
       (void)close(sock);
-      goto exit;
+      ok = true;
    }
-
    (void)close(sock);
-   failed = false;
 
-exit:
-   return failed;
+   return ok;
 }
 
-bool getNetworkName(char *iwname) {
+/**********************************************
+ * INPUT:
+ *    NONE
+ * OUTPUT:
+ *    iwname
+ *       Wirelss network name
+ * RETURN:
+ *    True on able to get a valid wirelss network,
+ *    else false
+ * DESCRIPTION:
+ *    Check all the wirelss networks on the card
+ *    and check if they're a valid network
+ **********************************************/
+static bool getNetworkName(char *const iwname) {
    bool failed = true;
    struct ifaddrs *ifaddr, *ifa;
 
    if (getifaddrs(&ifaddr) == -1) {
-      printf("Failed to get interface address - error(%m)\n");
-      goto exit;
+      printf("ERR: Failed to get interface address - error(%m)\n");
+   } else {
+      for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+         if (  (ifa->ifa_addr == NULL) ||
+               (ifa->ifa_addr->sa_family != AF_PACKET)) {
+            continue;
+         }
+
+         if (validWireless(ifa->ifa_name)) {
+            (void)strncpy(iwname,ifa->ifa_name, strlen(ifa->ifa_name));
+            failed = false;
+         }
+      }
+      freeifaddrs(ifaddr);
    }
 
-   for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-      char protocol[IFNAMSIZ]  = {0};
-      if (  ifa->ifa_addr == NULL
-         || ifa->ifa_addr->sa_family != AF_PACKET ) {
-         continue;
-      }
-
-      if (check_wireless(ifa->ifa_name, protocol)) {
-         (void)strncpy(iwname,ifa->ifa_name, strlen(ifa->ifa_name));
-      }
-   }
-
-   freeifaddrs(ifaddr);
-   failed = (iwname[0] != '\0') ? false:true;
-
-exit:
    return failed;
 }
 
-bool getSignalInfo(signal_info *sig_info, char *iwname) {
+/**********************************************
+ * INPUT:
+ *    iwname
+ *       Wirelss network name
+ * OUTPUT:
+ *    sig_info
+ *       Information about the Wireless network
+ * RETURN:
+ *    True on able to get information, else false
+ * DESCRIPTION:
+ *    Get the SSID and signal strength of the
+ *    wireless network we're using.
+ **********************************************/
+bool getSignalInfo(signal_info_s *const sig_info, const char *const iwname) {
    struct iwreq req;
-   bool failed = true;
-   struct iw_statistics * stats;
+   bool ok = true;
+   struct iw_statistics *stats;
+   static bool has_not_logged = true;
    (void)strncpy(req.ifr_name, iwname, sizeof(req.ifr_name));
 
    int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -85,70 +106,77 @@ bool getSignalInfo(signal_info *sig_info, char *iwname) {
    req.u.data.length = sizeof(* stats);
    req.u.data.flags = 1;
 
-   if (ioctl(sockfd, SIOCGIWSTATS, &req) == -1) {
-      fprintf(stderr, "Invalid interface\n");
-      goto exit;
-   } else if (((struct iw_statistics *)req.u.data.pointer)->qual.updated & IW_QUAL_DBM) {
-      sig_info->level = ((struct iw_statistics *)req.u.data.pointer)->qual.level - 256;
+   /* Check if Wirless name has internet access */
+   if (-1 == ioctl(sockfd, SIOCGIWSTATS, &req)) {
+      if (has_not_logged) {
+         printf("ERR: Invalid interface - error(%m)\n");
+         has_not_logged = false;
+      }
+      ok = false;
+   } else {
+      internet_avail = true;
+
+      /* Get signal stregth */
+      if (0 != (((struct iw_statistics *)req.u.data.pointer)->qual.updated & IW_QUAL_DBM)) {
+         sig_info->level = ((struct iw_statistics *)req.u.data.pointer)->qual.level - 256;
+      }
    }
 
-   char buffer[32];
-   memset(buffer, 0, 32);
-   req.u.essid.pointer = buffer;
-   req.u.essid.length = 32;
-   if (ioctl(sockfd, SIOCGIWESSID, &req) == -1) {
-      fprintf(stderr, "Invalid SSID\n");
-      goto exit;
-   } else {
-      memcpy(&sig_info->ssid, req.u.essid.pointer, req.u.essid.length);
-      memset(&sig_info->ssid[req.u.essid.length], 0, 1);
-   }
-
-   int bit_rate = -1;
-   if (ioctl(sockfd, SIOCGIWRATE, &req) == -1) {
-      fprintf(stderr, "Invalid bite\n");
-      goto exit;
-   } else {
-      memcpy(&bit_rate, &req.u.bitrate, sizeof(int));
-      sig_info->bit_rate = bit_rate / 1000000;
-   }
-
-   struct ifreq req2;
-   strcpy(req2.ifr_name, iwname);
-   if (ioctl(sockfd, SIOCGIFHWADDR, &req2) == -1) {
-      fprintf(stderr, "Invalid MAC address\n");
-      goto exit;
-   } else {
-      (void)snprintf(sig_info->mac, 18, "%.2X", (unsigned char)req2.ifr_hwaddr.sa_data[0]);
-      int i = 1;
-      for (; i < 6; i++) {
-         (void)snprintf(sig_info->mac+strlen(sig_info->mac), 18, ":%.2X", (unsigned char)req2.ifr_hwaddr.sa_data[i]);
+   /* Get the SSID */
+   if (ok) {
+      char buffer[32];
+      (void)memset(buffer, 0, 32);
+      req.u.essid.pointer = buffer;
+      req.u.essid.length = 32;
+      if (ioctl(sockfd, SIOCGIWESSID, &req) == -1) {
+         printf("ERR: Invalid SSID - error(%m)\n");
+         ok = false;
+      } else {
+         (void)memcpy(&sig_info->ssid, req.u.essid.pointer, req.u.essid.length);
+         (void)memset(&sig_info->ssid[req.u.essid.length], 0, 1);
       }
    }
    (void)close(sockfd);
-   failed = false;
 
-exit:
-   return failed;
+   return ok;
 }
 
 int main(int argc, char *argv[]) {
    char iwname[16] = { '\0' };
    if (getNetworkName(iwname)) {
-      printf("No valid network name found\n");
-      goto exit;
-   }
-   signal_info sig_info;
-   if (getSignalInfo(&sig_info, iwname)) {
-      printf("Failed\n");
-      goto exit;
+      printf("NOTICE: No valid network name found\n");
+   } else {
+      signal_info_s sig_info;
+      if (!getSignalInfo(&sig_info, iwname)) {
+         printf("NOTICE: No internet available\n");
+      }
+
+      if (internet_avail) {
+         printf("Internet is available - wireless name(%s)\n", iwname);
+         printf("SSID------- %s\n", sig_info.ssid);
+         printf("Level------ %d dBm\n", sig_info.level);
+
+         if (sig_info.level <= -30) {
+            sig_info.strength = SIGNAL_STRENGTH_STRONG;
+            printf("Strong signal strength\n");
+         } else if ((-30 < sig_info.level) && (sig_info.level <= -60)) {
+            sig_info.strength = SIGNAL_STRENGTH_GOOD;
+            printf("Good signal strength\n");
+         } else if ((-60 < sig_info.level) && (sig_info.level <= -70)) {
+            sig_info.strength = SIGNAL_STRENGTH_WEAK;
+            printf("Reliable/weak signal strength\n");
+         } else {
+            sig_info.strength = SIGNAL_STRENGTH_BAD;
+            printf("Unstable signal strength\n");
+         }
+      } else {
+         printf("Internet is not available\n");
+      }
    }
 
-   printf("SSID------- %s\n", sig_info.ssid);
-   printf("MAC-------- %s\n", sig_info.mac);
-   printf("Level------ %d\n", sig_info.level);
-   printf("Bit Rate--- %d\n", sig_info.bit_rate);
-
-exit:
    return 0;
+}
+
+const bool net_internet_avail( void ) {
+   return internet_avail;
 }

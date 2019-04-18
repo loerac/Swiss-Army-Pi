@@ -3,7 +3,7 @@ TARGETTYPE=so
 SOURCES=$(wildcard *.c)
 OFILES=$(SOURCES:.c=.o)
 
-EXTRACFLAGS=${net_cflags} ${}
+EXTRACFLAGS=${net_cflags}
 
 EXTRALIBS+=${net_ldflags}
 

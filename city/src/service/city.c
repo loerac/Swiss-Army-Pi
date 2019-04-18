@@ -6,6 +6,8 @@
 #include "city_types.h"
 #include "city_config.h"
 
+#include "net_api.h"
+
 #define CITY_CUSTOM "/custom/city/city.json"
 
 static url_sts  url = { '\0' };
@@ -16,21 +18,26 @@ city_init cityInit( void ) {
     city_init status = CITY_OK;
 
     failed = city_config(CITY_CUSTOM);
-    if (failed) {
+    if (!failed) {
         status = CITY_FILE_PROCESS_NOK;
         goto exit;
     }
 
-    failed = weatherURL(&url);
-    if (failed) {
-        status = CITY_WEATHER_URL_NOK;
-        goto exit;
-    }
+    if (internetAvail()) {
+       failed = weatherURL(&url);
+       if (failed) {
+           status = CITY_WEATHER_URL_NOK;
+           goto exit;
+       }
 
-    failed = jsonConfig(&map);
-    if (failed) {
-        goto exit;
-    }
+       failed = jsonConfig(&map);
+       if (failed) {
+           goto exit;
+       }
+   } else {
+      printf("NOTICE: Internet is not available\n");
+      status = CITY_WEATHER_URL_NOK;
+   }
 
 exit:
     return status;

@@ -10,18 +10,20 @@ include outputs.make
 export SRC_BASE=$(CURDIR)/src
 export BIN_PATH=$(SRC_BASE)/bin
 export LIB_PATH=$(SRC_BASE)/lib
+export API_PATH=$(SRC_BASE)/api
 
 all: ${net_all}
 bin: ${net_bin}
 lib: ${net_lib}
+api: ${net_api}
 include: ${net_include}
 data: ${net_data}
 
 clean:
 	${MAKE} -C src clean
-	rm -rf ${net_bin} ${net_lib} ${net_lib} ${net_include}
+	rm -rf ${net_bin} ${net_lib} ${net_api} ${net_lib} ${net_include}
 
-.PHONY: all clean bin include data ${net_all}
+.PHONY: all clean bin lib include data ${net_all}
 
 ${net_bin}:
 	${MAKE} -C src ${@F}
@@ -30,6 +32,10 @@ ${net_bin}:
 ${net_lib}:
 	${MAKE} -C src ${@F}
 	@cp -ulf $(LIB_PATH)/${@F} $@
+
+${net_api}:
+	${MAKE} -C src ${@F}
+	@cp -ulf $(API_PATH)/${@F} $@
 
 ${net_include}:
 	cp -ln -t ${@D} $(addprefix src/include/, ${@F})

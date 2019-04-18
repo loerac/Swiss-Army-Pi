@@ -4,6 +4,7 @@
 clean:
 	rm -rf ${BIN_PATH}
 	rm -rf ${LIB_PATH}
+	${MAKE} -C api $@
 	${MAKE} -C service $@
 
 .PHONY: net

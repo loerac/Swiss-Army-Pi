@@ -20,9 +20,11 @@ data: ${net_data}
 
 install:
 	cp -a ${net_lib} $(EXPORT_LIBRARY)
+	cp -a ${net_bin} $(EXPORT_BINARY)
 
 uninstall:
 	rm -rf $(EXPORT_LIBRARY)/$(net_lib:lib/%=%)
+	rm -rf $(EXPORT_BINARY)/$(net_bin:bin/%=%)
 
 clean:
 	${MAKE} -C src clean

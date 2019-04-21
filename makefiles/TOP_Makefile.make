@@ -2,6 +2,7 @@
 
 export TOPDIR=$(realpath $(shell pwd) )
 export EXPORT_LIBRARY ?= /usr/local/lib
+export EXPORT_BINARY  ?= /usr/local/bin
 
 include *_Makefile.make
 include $(addsuffix /flags.make,${all_dirs})
@@ -13,9 +14,16 @@ install:
 	@for dir in ${all_libs}; do \
 		${MAKE} -C $$dir install; \
 	done
+	@echo "export LD_LIBRARY_PATH=/usr/local/lib/:$(LD_LIBRARY_PATH)"
+	@for dir in ${all_bins}; do \
+		${MAKE} -C $$dir install; \
+	done
 
 uninstall:
 	@for dir in ${all_libs}; do \
+		${MAKE} -C $$dir uninstall; \
+	done
+	@for dir in ${all_bins}; do \
 		${MAKE} -C $$dir uninstall; \
 	done
 

@@ -20,7 +20,7 @@ typedef struct signal_info {
 } signal_info_s;
 
 bool netInit( void );
-signal_info_s *getInternetInfo( void );
+const signal_info_s getInternetInfo( void );
 const bool internetAvail( void );
 
 #endif /* _NET_API_H_ */

@@ -8,12 +8,6 @@ LINKFLAGS+=$(EXTRALIBS) \
 	   $(EXTRACFLAGS) \
            $(LIBS_ENTRY)
 
--include $(OFILES:.o=.d)
-
-ifdef DEPS_DIR
-CFLAGS += -I$(DEPS_DIR)/include
-endif
-
 .PHONY: all
 all: $(TARGET).$(TARGETTYPE)
 
@@ -24,8 +18,8 @@ clean:
 $(TARGET).so: $(OFILES)
 	@echo Generating static library $@
 	mkdir -p $(LIB_PATH)
-	$(AR) rcs $(LIB_PATH)/lib$(TARGET).so $(OFILES)
-	#$(CC) $^ -shared -Wl,-soname,$(TARGET).so -o $(LIB_PATH)/lib$@
+	$(CC) $(CFLAGS) -fPIC -c $(SOURCES)
+	$(CC) -shared -Wl,-soname,$(TARGET).so -o $(LIB_PATH)/$@ $^
 
 $(TARGET).exe: $(LIBS_PATHS) $(OFILES)
 	@echo Main Generate $@

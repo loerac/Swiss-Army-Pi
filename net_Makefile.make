@@ -21,12 +21,14 @@ PHONIES += net_bin net_lib net_api net_include net_data
 net_bin: ${net_bin}
 ${net_bin}: ${net_bin_deps}
 	@ echo; echo Entering ${net_dir} to build $(@:${net_dir}/%=%); echo
+	mkdir -p ${net_dir}/bin
 	${MAKE} -C ${net_dir} $(@:${net_dir}/%=%)
 	@ echo ; echo ; echo
 
 net_lib: ${net_lib}
 ${net_lib}: ${net_lib_deps}
 	@ echo; echo Entering ${net_dir} to build $(@:${net_dir}/%=%); echo
+	mkdir -p ${net_dir}/lib
 	${MAKE} -C ${net_dir} $(@:${net_dir}/%=%)
 	@ echo ; echo ; echo
 
@@ -39,6 +41,7 @@ ${net_api}: ${net_api_deps}
 net_include: ${net_include}
 ${net_include}: ${net_include_deps}
 	@ echo; echo Entering ${net_dir} to build $(@:${net_dir}/%=%); echo
+	mkdir -p ${net_dir}/include
 	${MAKE} -C ${net_dir} $(@:${net_dir}/%=%)
 	@ echo ; echo ; echo
 

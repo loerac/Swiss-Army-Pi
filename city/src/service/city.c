@@ -6,14 +6,13 @@
 #include "city_parse.h"
 #include "city_types.h"
 #include "city_custom.h"
-
 #include "net_api.h"
 
 #define CITY_CUSTOM  "/custom/city/city.json"
 #define CITY_URL     "/custom/city/url.json"
 
-static url_sts  url = { '\0' };
-static city_map map = { '\0' };
+static url_config_s  url = { '\0' };
+static city_map_s    map = { '\0' };
 
 /**********************************************
  * INPUT:
@@ -37,25 +36,22 @@ city_init_e cityInit( void ) {
       status = CITY_CITY_CUSTOM;
    }
 
+   if (netInit() && internetAvail()) {
+      if (ok) {
+         ok = weatherURL(&url);
+      } else {
+         status = CITY_URL_CUSTOM;
+      }
 
-   if (ok) {
-      ok = weatherURL(&url);
-   } else {
-      status = CITY_URL_CUSTOM;
-   }
+      if (ok) {
+         ok = jsonConfig(&map);
+      } else {
+         status = CITY_WEATHER_URL;
+      }
 
-   if (ok) {
-      ok = jsonConfig(&map);
-   } else {
-      status = CITY_WEATHER_URL;
-   }
-
-   if (!ok) {
-      status = CITY_WEATHER_PARSE;
-   }
-   } else {
-      printf("NOTICE: Internet is not available\n");
-      status = CITY_WEATHER_URL_NOK;
+      if (!ok) {
+         status = CITY_WEATHER_PARSE;
+      }
    }
 
    return status;

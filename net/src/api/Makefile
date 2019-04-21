@@ -1,4 +1,4 @@
-TARGET=net
+TARGET=libnet
 TARGETTYPE=so
 SOURCES=$(wildcard *.c)
 OFILES=$(SOURCES:.c=.o)

@@ -12,7 +12,7 @@
 #include "net_api.h"
 
 static bool internet_avail = false;
-static signal_info_s *signal = {0};
+static signal_info_s signal = {0};
 
 /**********************************************
  * INPUT:
@@ -153,7 +153,7 @@ bool netInit( void ) {
    char dev_name[MAX_DEV_LEN + 1U] = {0};
 
    if (getNetworkName(dev_name)) {
-      if (getSignalInfo(signal, dev_name)) {
+      if (getSignalInfo(&signal, dev_name)) {
          ok = true;
       } else {
          printf("NOTICE: Failed to retrieve information on wireless device %s\n", dev_name);
@@ -168,7 +168,7 @@ bool netInit( void ) {
 /**********************************************
  * See net_api.h for description.
  **********************************************/
-signal_info_s *getInternetInfo( void ) {
+const signal_info_s getInternetInfo( void ) {
    return signal;
 }
 
@@ -178,3 +178,4 @@ signal_info_s *getInternetInfo( void ) {
 const bool internetAvail( void ) {
    return internet_avail;
 }
+

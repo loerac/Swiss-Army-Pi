@@ -19,18 +19,21 @@ PHONIES += city_bin city_lib city_include city_data
 city_bin: ${city_bin}
 ${city_bin}: ${city_bin_deps}
 	@ echo; echo Entering ${city_dir} to build $(@:${city_dir}/%=%); echo
+	mkdir -p ${city_dir}/bin
 	${MAKE} -C ${city_dir} $(@:${city_dir}/%=%)
 	@ echo ; echo ; echo
 
 city_lib: ${city_lib}
 ${city_lib}: ${city_lib_deps}
 	@ echo; echo Entering ${city_dir} to build $(@:${city_dir}/%=%); echo
+	mkdir -p ${city_dir}/lib
 	${MAKE} -C ${city_dir} $(@:${city_dir}/%=%)
 	@ echo ; echo ; echo
 
 city_include: ${city_include}
 ${city_include}: ${city_include_deps}
 	@ echo; echo Entering ${city_dir} to build $(@:${city_dir}/%=%); echo
+	mkdir -p ${city_dir}/include
 	${MAKE} -C ${city_dir} $(@:${city_dir}/%=%)
 	@ echo ; echo ; echo
 

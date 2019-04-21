@@ -198,7 +198,7 @@ static bool city_region(json_object *jb, const char *const jb_key) {
  **********************************************/
 bool city_city_custom(const char *const json) {
    int size = 0;
-   bool ok = false;
+   bool ok = true;
    char loc[MAX_LOCATION_LEN] = {0};
    char format[MAX_FORMAT_LEN] = {0};
 
@@ -219,13 +219,13 @@ bool city_city_custom(const char *const json) {
          } else if (strncmp(key, "coord", sizeof("coord")) == 0) {
             ok = city_coords(obj, key);
          } else {
-            ok = true;
+            ok = false;
             printf("Unknown key: %s\n", key);
          }
       }
    } else {
       ok = false;
-      printf("Reading JSON '%s' failed - (error=%m)\n", json);
+      printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", json);
    }
 
    return ok;
@@ -249,6 +249,9 @@ bool city_url_custom(const char *const json, url_config_s *url) {
             printf("Unknown key: %s\n", key);
          }
       }
+   } else {
+      printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", json);
+      ok = false;
    }
 
    return ok;

@@ -17,6 +17,12 @@ lib: ${city_lib}
 include: ${city_include}
 data: ${city_data}
 
+install:
+	cp -a ${city_bin} $(EXPORT_BINARY)
+
+uninstall:
+	rm -rf $(EXPORT_BINARY)/$(city_bin:bin/%=%)
+
 clean:
 	${MAKE} -C src clean
 	rm -rf ${city_bin} ${city_lib} ${city_include}

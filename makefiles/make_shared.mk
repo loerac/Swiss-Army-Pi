@@ -1,35 +1,34 @@
-
 CC=gcc
-CFLAGS+=$(EXTRACFLAGS)
+COMMON_CFLAGS= -Wall -Werror
+
+CFLAGS+=$(EXTRACFLAGS) \
+	$(COMMON_CFLAGS)
 
 LINKFLAGS+=$(EXTRALIBS) \
-          $(LIBS_ENTRY)
-
-COMMON_CFLAGS= -Wall -Werror
--include $(OFILES:.o=.d)
-
-ifdef DEPS_DIR
-CFLAGS += -I$(DEPS_DIR)/include
-endif
+	   $(EXTRACFLAGS) \
+           $(LIBS_ENTRY)
 
 .PHONY: all
-all: $(TARGET)
+all: $(TARGET).$(TARGETTYPE)
 
 .PHONY: clean
 clean:
 	-rm -f *.o *.a *.d
 
-$(TARGET).object: $(OFILES)
+$(TARGET).so: $(OFILES)
+	@echo Generating static library $@
+	mkdir -p $(LIB_PATH)
+	$(CC) $(CFLAGS) -fPIC -c $(SOURCES)
+	$(CC) -shared -Wl,-soname,$(TARGET).so -o $(LIB_PATH)/$@ $^
 
-$(TARGET): $(LIBS_PATHS) $(OFILES)
-	@echo Generate $@
-	$(info Binary is Linking against [${OFILES}] and [${LIBS_PATHS}])
+$(TARGET).exe: $(LIBS_PATHS) $(OFILES)
+	@echo Main Generate $@
+	$(info Binary is Linking against [${OFILES}] and [${LINKFLAGS}])
 	mkdir -p $(BIN_PATH)
 	$(CC) -o $(BIN_PATH)/$(TARGET) $(OFILES) $(LINKFLAGS)
-	@sleep 1
 
 .c.o:
-	@echo Generate $@
+	@echo C Object Generate $@
 	$(CC) $(CFLAGS) -c $*.c
 	$(CC) -MM $(CFLAGS) -c $*.c -o $*.d
 	@mv -f $*.d $*.d.tmp

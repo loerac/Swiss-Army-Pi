@@ -1,3 +1,5 @@
+# *NOTE: Currently blocked until linked_list_library and curl_library stories are complete*
+
 # Get the stock exchange
 
 ### Synopsis

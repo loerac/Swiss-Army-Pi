@@ -1,5 +1,14 @@
 #include <stdio.h>
 
+#include "stocks.h"
+#include "stocks_custom.h"
+
+typedef enum stock_init_status {
+   STOCK_OK = 0,
+   STOCK_CUSTOM_INVALID,
+   STOCK_URL_API_INVALID,
+} stock_init_status_e;
+
 int main(int argc, char *argv[]) {
    /*
    * TODO: The start-up needs to be done
@@ -16,4 +25,12 @@ int main(int argc, char *argv[]) {
    *     - API key
    * 3.) Connect to the API and parse
    */
+   stock_init_status_e status = STOCK_OK;
+   if (!stock_custom()) {
+      status = STOCK_CUSTOM_INVALID;
+   } else if (!stock_api_custom()) {
+      status = STOCK_URL_API_INVALID;
+   }
+
+   return status;
 }

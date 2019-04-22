@@ -5,7 +5,7 @@ OFILES=$(SOURCES:.c=.o)
 EXTRACFLAGS=$(shell pkg-config --cflags)
 EXTRACFLAGS+=${net_cflags}
 
-EXTRALIBS=$(shell pkg-config --libs )
+EXTRALIBS=$(shell pkg-config --libs ) -ljson-c -lcurl
 EXTRALIBS+=${net_ldflags}
 
 include $(TOPDIR)/stocks/directories.include

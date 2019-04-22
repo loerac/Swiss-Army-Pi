@@ -36,6 +36,7 @@ bool stock_custom( void ) {
          } else {
             printf("ERR: '%s' is an invalid stock exchange customization file\n", STOCK_EXCHANGE_CUSTOM);
             ok = false;
+            break;
          }
       }
 
@@ -53,5 +54,27 @@ bool stock_custom( void ) {
  * See stocks_custom.h for description
  **********************************************/
 bool stock_api_custom( void ) {
-   return true;
+   bool ok = true;
+
+   json_object *obj = json_object_from_file(STOCK_EXCHANGE_API);
+   if (NULL != obj) {
+      json_object_object_foreach(obj, key, val) {
+         if (0 == strncmp(key, "url", sizeof("url"))) {
+            (void)strncpy(stocks_api.url, json_object_get_string(val), sizeof(stocks_api.url));
+            printf("stocks_api.url = %s\n", stocks_api.url);
+         } else if (0 == strncmp(key, "key", sizeof("key"))) {
+            (void)strncpy(stocks_api.key, json_object_get_string(val), sizeof(stocks_api.key));
+            printf("stocks_api.key = %s\n", stocks_api.key);
+         } else {
+            printf("ERR: '%s' is an invalid stock exchange customization file\n", STOCK_EXCHANGE_CUSTOM);
+            ok = false;
+            break;
+         }
+      }
+   } else {
+      printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", STOCK_EXCHANGE_API);
+      ok = false;
+   }
+
+   return ok;
 }

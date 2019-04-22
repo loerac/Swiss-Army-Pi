@@ -9,6 +9,8 @@
 #define MAX_INTERVAL_LEN      5U
 #define MAX_OUTPUT_SIZE_LEN   7U
 #define MAX_TIME_SERIES_LEN   28U
+#define MAX_URL_KEY_LEN       30U
+#define MAX_URL_API_LEN       34U
 
 /* Total amount of stock exchange to check */
 /*
@@ -23,6 +25,8 @@ typedef struct stocks_api_parameters {
    /* Required API parameters*/
    char function[MAX_TIME_SERIES_LEN + 1U];
    char symbol[MAX_TICKER_SYMBOL_LEN + 1U];
+   char key[MAX_URL_KEY_LEN + 1U];
+   char url[MAX_URL_API_LEN + 1U];
 
    /* Optional API parameters*/
    char interval[MAX_INTERVAL_LEN + 1U];

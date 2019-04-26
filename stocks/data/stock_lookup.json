@@ -67,7 +67,5 @@
       "to_currency":"TMT"
     }
   ],
-  "sector_performance": {
-    "function":"SECTOR"
-  }
+  "sector_performance": "SECTOR"
 }

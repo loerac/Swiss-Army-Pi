@@ -1,68 +1,72 @@
 {
-  "stock_time_series": {
-    "function":"TIME_SERIES_INTRADAY",
-    "symbol":"MSFT",
-    "interval":"1min",
-    "outputsize":"compact"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_DAILY",
-    "symbol":"BA",
-    "outputsize":"compact"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_DAILY_ADJUSTED",
-    "symbol":"MGC",
-    "outputsize":"full"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_WEEKLY",
-    "symbol":"SNAP"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_WEEKLY_ADJUSTED",
-    "symbol":"JPM"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_MONTHLY",
-    "symbol":"VUG"
-  },
-  "stock_time_series": {
-    "function":"TIME_SERIES_MONTHLY_ADJUSTED",
-    "symbol":"SBUX"
-  },
-  "stock_time_series": {
-    "function":"GLOBAL_QUOTE",
-    "symbol":"BAC"
-  },
-  "foreign_exchange": {
-    "function":"CURRENCY_EXCHANGE_RATE",
-    "from_currency":"USD",
-    "to_currency":"BTC"
-  },
-  "foreign_exchange": {
-    "function":"FX_INTRADAY",
-    "from_currency":"EUR",
-    "to_currency":"HTG",
-    "interval":"5min",
-    "outputsize":"compact"
-  },
-  "foreign_exchange": {
-    "function":"FX_DAILY",
-    "from_currency":"FTC",
-    "to_currency":"FJD",
-    "outputsize":"compact"
-  },
-  "foreign_exchange": {
-    "function":"FX_WEEKLY",
-    "from_currency":"MGA",
-    "to_currency":"EVX"
-  },
-  "foreign_exchange": {
-    "function":"FX_MONTHLY",
-    "from_currency":"CAD",
-    "to_currency":"TMT"
-  },
+  "stock_time_series": [
+      {
+        "function":"TIME_SERIES_INTRADAY",
+        "symbol":"MSFT",
+        "interval":"1min",
+        "outputsize":"compact"
+      },
+      {
+        "function":"TIME_SERIES_DAILY",
+        "symbol":"BA",
+        "outputsize":"compact"
+      },
+      {
+        "function":"TIME_SERIES_DAILY_ADJUSTED",
+        "symbol":"MGC",
+        "outputsize":"full"
+      },
+      {
+        "function":"TIME_SERIES_WEEKLY",
+        "symbol":"SNAP"
+      },
+      {
+        "function":"TIME_SERIES_WEEKLY_ADJUSTED",
+        "symbol":"JPM"
+      },
+      {
+        "function":"TIME_SERIES_MONTHLY",
+        "symbol":"VUG"
+      },
+      {
+        "function":"TIME_SERIES_MONTHLY_ADJUSTED",
+        "symbol":"SBUX"
+      },
+      {
+        "function":"GLOBAL_QUOTE",
+        "symbol":"BAC"
+      }
+  ],
+  "foreign_exchange": [
+    {
+      "function":"CURRENCY_EXCHANGE_RATE",
+      "from_currency":"USD",
+      "to_currency":"BTC"
+    },
+    {
+      "function":"FX_INTRADAY",
+      "from_currency":"EUR",
+      "to_currency":"HTG",
+      "interval":"5min",
+      "outputsize":"compact"
+    },
+    {
+      "function":"FX_DAILY",
+      "from_currency":"FTC",
+      "to_currency":"FJD",
+      "outputsize":"compact"
+    },
+    {
+      "function":"FX_WEEKLY",
+      "from_currency":"MGA",
+      "to_currency":"EVX"
+    },
+    {
+      "function":"FX_MONTHLY",
+      "from_currency":"CAD",
+      "to_currency":"TMT"
+    }
+  ],
   "sector_performance": {
     "function":"SECTOR"
   }

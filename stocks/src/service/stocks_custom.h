@@ -12,34 +12,6 @@
 #define MAX_URL_KEY_LEN       30U
 #define MAX_URL_API_LEN       34U
 
-#define MAX_OUTPUTSIZE_CALL_LEN  2U
-#define MAX_INTERVAL_CALL_LEN    5U
-#define MAX_FUNCTION_CALL_LEN    8U
-
-const char *const valid_outputsize_calls[MAX_OUTPUTSIZE_CALL_LEN] = {
-   "compact",
-   "full"
-};
-
-const char *const valid_interval_calls[MAX_INTERVAL_CALL_LEN] = {
-   "1min",
-   "5min",
-   "15min",
-   "30min",
-   "60min"
-};
-
-const char *const valid_function_calls[MAX_FUNCTION_CALL_LEN] = {
-   "TIME_SERIES_INTRADAY",
-   "TIME_SERIES_DAILY",
-   "TIME_SERIES_DAILY_ADJUSTED",
-   "TIME_SERIES_WEEKLY",
-   "TIME_SERIES_WEEKLY_ADJUSTED",
-   "TIME_SERIES_MONTH",
-   "TIME_SERIES_MONTH_ADJUSTED",
-   "GLOBAL_QUOTE"
-};
-
 /* Total amount of stock exchange to check */
 /*
  * TODO: Blocked on linked-list library story. For right

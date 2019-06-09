@@ -1,41 +1,22 @@
+# Add the top directory to the beginning all the parts and
+# add '/flags.mk' to the end of those parts
+include $(addsuffix /flags.mk, $(addprefix $(TOPDIR)/,$(all_dirs)))
 
-include outputs.make
+export OUTPUT_BIN = $(CURDIR)/bin
 
-#ifndef TOPDIR
-        export TOPDIR=$(realpath $(shell pwd)/../)
-        include ${TOPDIR}/dir.make
-        include $(addsuffix /flags.make, $(addprefix ${TOPDIR}/,${all_dirs}))
-#endif
+BUILD = src
+all: $(BUILD)
 
-export SRC_BASE=$(CURDIR)/src
-export BIN_PATH=$(SRC_BASE)/bin
-export LIB_PATH=$(SRC_BASE)/lib
-
-all: ${stocks_all}
-bin: ${stocks_bin}
-lib: ${stocks_lib}
-include: ${stocks_include}
-data: ${stocks_data}
+.PHONY: all $(BUILD)
+src:
+	$(MAKE) -C src $(@F)
 
 install:
-	cp -a ${stocks_bin} $(EXPORT_BINARY)
+	$(MAKE) -C src $(@F)
 
 uninstall:
-	rm -rf $(EXPORT_BINARY)/$(stocks_bin:bin/%=%)
+	$(MAKE) -C src $(@F)
 
+.PHONY: clean
 clean:
-	${MAKE} -C src clean
-	rm -rf ${stocks_bin} ${stocks_lib} ${stocks_include}
-
-.PHONY: all clean bin lib include data ${stocks_all}
-
-${stocks_bin}:
-	${MAKE} -C src ${@F}
-	@cp -ulf $(BIN_PATH)/${@F} $@
-
-${stocks_lib}:
-	${MAKE} -C src ${@F}
-	@cp -ulf $(LIB_PATH)/${@F} $@
-
-${stocks_include}:
-	cp -ln -t ${@D} $(addprefix src/include/, ${@F})
+	$(MAKE) -C src $(@F)

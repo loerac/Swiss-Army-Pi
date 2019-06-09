@@ -1,11 +1,9 @@
-.PHONY: all
+TARGET = stocks
+TYPE = exe
+INCLUDE =
+EXTRA_CFLAGS = $(slist_cflags) $(net_cflags)
+EXTRA_LDFLAGS = $(slist_ldflags) $(net_ldflags) -ljson-c -lcurl
+SOURCE = $(wildcard *.c)
 
-.PHONY: clean
-clean:
-	rm -rf ${BIN_PATH}
-	rm -rf ${LIB_PATH}
-	${MAKE} -C service $@
+include $(TOPDIR)/common.mk
 
-.PHONY: stocks
-stocks:
-	${MAKE} -C service all

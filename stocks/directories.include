@@ -1,5 +1,0 @@
-
-EXTRACFLAGS += -I$(TOPDIR)/city/include \
-               -I$(SRC_BASE) \
-               -I$(SRC_BASE)/include \
-               -I$(SRC_BASE)/service \

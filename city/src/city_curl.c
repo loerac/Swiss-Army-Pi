@@ -1,11 +1,13 @@
+#include "slist.h"
+#include "city_curl.h"
+#include "city_types.h"
+#include "city_custom.h"
+#include "type_compat.h"
+
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
-
-#include "city_curl.h"
-#include "city_types.h"
-#include "city_custom.h"
 
 static char url_str[512U] = {0};
 static city_info_s city = { '\0' };
@@ -62,8 +64,8 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb, void *us
  **********************************************/
 static bool url_configuration(const url_config_s *url) {
    bool ok = false;
-   city_list_s *format_list = get_format();
-   city_list_s *search_list = get_location();
+   slist_s *format_list = get_format();
+   slist_s *search_list = get_location();
 
    if (NULL != search_list) {
       const city_search_s *search = (city_search_s *)search_list->data;
@@ -71,9 +73,9 @@ static bool url_configuration(const url_config_s *url) {
       while (NULL != format_list) {
          const city_format_s *format = (city_format_s *)format_list->data;
          (void)strncat(format_str, format->data, format->size);
-         format_list = city_list_next(format_list);
+         format_list = slistNext(format_list);
       }
-      (void)snprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", url->url, search->data, format_str, url->key, '\0');
+      isnprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", url->url, search->data, format_str, url->key, '\0');
       printf("URL STRING: %s\n", url_str);
       ok = true;
    }
@@ -104,7 +106,7 @@ bool weatherURL(const url_config_s *url) {
       curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
       res = curl_easy_perform(curl_handle);
 
-      if (res != CURLE_OK) {
+      if (CURLE_OK != res) {
          printf("ERR: curl_easy_perform() failed - error(%s)\n", curl_easy_strerror(res));
       } else {
          curl_easy_cleanup(curl_handle);

@@ -1,5 +1,5 @@
-#ifndef _CITY_FILEH_
-#define _CITY_FILEH_
+#ifndef _CITY_FILE_H_
+#define _CITY_FILE_H_
 
 #include "slist.h"
 #include "city_list.h"
@@ -61,7 +61,7 @@ bool city_url_custom(const char *const json, url_config_s *url);
  * DESCRIPTION:
  *    See RETURN for description.
  **********************************************/
-city_list_s *get_format( void );
+slist_s *get_format( void );
 
 /**********************************************
  * INPUT:
@@ -73,6 +73,6 @@ city_list_s *get_format( void );
  * DESCRIPTION:
  *    See RETURN for description.
  **********************************************/
-city_list_s *get_location( void );
+slist_s *get_location( void );
 
 #endif

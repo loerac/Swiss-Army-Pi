@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "required": [
+    "SSID",
+    "PSK"
+  ],
+  "properties": {
+    "SSID": {
+      "$id": "#/properties/SSID",
+      "type": "string",
+      "readOnly": true
+    },
+    "PSK": {
+      "$id": "#/properties/PSK",
+      "type": "string",
+      "readOnly": true
+    }
+  }
+}

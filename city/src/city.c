@@ -26,32 +26,25 @@ static city_map_s    map = { '\0' };
  *    Configures the URL and MAP of the city.
  **********************************************/
 city_init_e cityInit( void ) {
-   bool ok = true;
    city_init_e status = CITY_OK;
 
-   ok = city_city_custom(CITY_CUSTOM);
-   if (ok) {
-      ok = city_url_custom(CITY_URL, &url);
-   } else {
-      status = CITY_CITY_CUSTOM;
-   }
-
    if (netInit() && internetAvail()) {
-      if (ok) {
-         ok = weatherURL(&url);
-      } else {
-         status = CITY_URL_CUSTOM;
+      status = (city_city_custom(CITY_CUSTOM)) ? CITY_OK : CITY_CITY_CUSTOM;
+
+      if (CITY_OK == status) {
+         status = (city_url_custom(CITY_URL, &url)) ? CITY_OK : CITY_URL_CUSTOM;
       }
 
-      if (ok) {
-         ok = jsonConfig(&map);
-      } else {
-         status = CITY_WEATHER_URL;
+      if (CITY_OK == status) {
+         status = (weatherURL(&url)) ? CITY_OK : CITY_WEATHER_URL;
       }
 
-      if (!ok) {
-         status = CITY_WEATHER_PARSE;
+      if (CITY_OK == status) {
+         status = (jsonConfig(&map)) ? CITY_OK : CITY_WEATHER_PARSE;
       }
+   } else {
+      status = CITY_OK_NO_INTERNET;
+      printf("No internet available, exiting\n");
    }
 
    return status;

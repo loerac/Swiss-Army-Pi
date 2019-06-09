@@ -1,10 +1,11 @@
 #ifndef _CITY_FILEH_
 #define _CITY_FILEH_
 
-#include <stdbool.h>
-
+#include "slist.h"
 #include "city_list.h"
 #include "city_types.h"
+
+#include <stdbool.h>
 
 typedef struct city_search_s {
     size_t size;

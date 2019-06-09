@@ -2,7 +2,8 @@
 # add '/flags.mk' to the end of those parts
 include $(addsuffix /flags.mk, $(addprefix $(TOPDIR)/,$(all_dirs)))
 
-export OUTPUT_BIN = $(CURDIR)/bin
+export OUTPUT_LIB = $(CURDIR)/lib
+export OUTPUT_INC = $(CURDIR)/include
 
 BUILD = src include
 all: $(BUILD)

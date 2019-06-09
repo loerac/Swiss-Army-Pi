@@ -1,11 +1,13 @@
+#include "slist.h"
+#include "stocks.h"
+#include "type_compat.h"
+#include "stocks_custom.h"
+
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <json-c/json.h>
-
-#include "stocks.h"
-#include "stocks_custom.h"
 
 #define STOCK_LOOKUP       "/custom/stocks/stock_lookup.json"
 #define STOCK_EXCHANGE_API "/custom/stocks/stock_exchange_url.json"
@@ -14,6 +16,8 @@
 #define MAX_INTERVAL_CALL           5U
 #define MAX_FOREIGN_EXCHANGE_CALL   5U
 #define MAX_TIME_SERIES_CALL        8U
+
+static slist_s *stock_list = NULL;
 
 const char *const valid_outputsize_calls[MAX_OUTPUTSIZE_CALL] = {
    "compact",
@@ -245,10 +249,10 @@ bool stock_api_custom( void ) {
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
          if (0 == strncmp(key, "url", sizeof("url"))) {
-            (void)strncpy(stocks_api.url, json_object_get_string(val), sizeof(stocks_api.url));
+            istrncpy(stocks_api.url, json_object_get_string(val), sizeof(stocks_api.url));
             printf("stocks_api.url = %s\n", stocks_api.url);
          } else if (0 == strncmp(key, "key", sizeof("key"))) {
-            (void)strncpy(stocks_api.key, json_object_get_string(val), sizeof(stocks_api.key));
+            istrncpy(stocks_api.key, json_object_get_string(val), sizeof(stocks_api.key));
             printf("stocks_api.key = %s\n", stocks_api.key);
          } else {
             printf("ERR: '%s' is an invalid stock exchange customization file\n", STOCK_LOOKUP);

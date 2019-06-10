@@ -1,43 +1,35 @@
 #ifndef _STOCKS_CUSTOM_H_
 #define _STOCKS_CUSTOM_H_
 
+#include "stocks_common.h"
+
 #include <stdbool.h>
 
 /* Stock API parameter info */
-#define MAX_DATATYPE_LEN      4U
-#define MAX_TICKER_SYMBOL_LEN 5U
-#define MAX_INTERVAL_LEN      5U
-#define MAX_OUTPUT_SIZE_LEN   7U
-#define MAX_TIME_SERIES_LEN   28U
-#define MAX_URL_KEY_LEN       30U
 #define MAX_URL_API_LEN       34U
+#define MAX_URL_KEY_LEN       30U
+#define MAX_TICKER_SYMBOL_LEN 5U
 
-/* Total amount of stock exchange to check */
-/*
- * TODO: Blocked on linked-list library story. For right
- * now, we will only check on one stock exchange. There
- * will be another story to update this to use multiple
- * stock exchanges.
-#define MAX_STOCK_EXCHANGE    5U
-*/
+/* Max stock markets to monitor */
+#define MAX_STOCK_MARKETS     10U
 
-typedef struct stocks_api_parameters {
-   /* Required API parameters*/
-   char function[MAX_TIME_SERIES_LEN + 1U];
-   char symbol[MAX_TICKER_SYMBOL_LEN + 1U];
-   char key[MAX_URL_KEY_LEN + 1U];
+typedef struct stocks_operation {
+   int time_interval;
    char url[MAX_URL_API_LEN + 1U];
+   char key[MAX_URL_KEY_LEN + 1U];
+} stocks_operation_s;
 
-   /* Optional API parameters*/
-   char interval[MAX_INTERVAL_LEN + 1U];
-   char outputsize[MAX_OUTPUT_SIZE_LEN + 1U];
-   char datatype[MAX_DATATYPE_LEN + 1U];
-} stocks_api_parameters_s;
+typedef struct time_series {
+   time_series_function_e function;
+   time_series_interval_e interval;
+   time_series_opsize_e opsize;
+   char symbol[MAX_TICKER_SYMBOL_LEN + 1U];
+} time_series_s;
 
 /**********************************************
  * INPUT:
  *    NONE
-
+ *
  * OUTPUT:
  *    NONE
  *
@@ -53,7 +45,7 @@ bool stock_custom( void );
 /**********************************************
  * INPUT:
  *    NONE
-
+ *
  * OUTPUT:
  *    NONE
  *

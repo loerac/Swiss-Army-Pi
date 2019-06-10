@@ -16,7 +16,7 @@
 static slist_s *stock_list = NULL;
 
 typedef bool (*stock_callback)(json_object*);
-static stock_opersation_s stock_oper = {0};
+static stocks_operation_s stock_opers = {0};
 
 /**
  * INPUT:
@@ -77,7 +77,7 @@ static bool parse_stock_time_series(json_object *obj) {
 static bool parse_foreign_exchange(json_object *obj) {
    bool ok = true;
 
-   /* TODO: Create common converter for the foreign exchange */
+   /* TODO: Create common converter for the foreign exchange * /
    printf("FOREIGN EXCHANGE:\n");
    json_object_object_foreach(obj, key, val) {
       if ( (0 == strncmp(key, "function", sizeof("function"))) &&
@@ -85,7 +85,7 @@ static bool parse_foreign_exchange(json_object *obj) {
                        valid_foreign_exchange_calls, MAX_FOREIGN_EXCHANGE_CALL)) ) {
          printf("\tFUNCTION: = %s\n", json_object_get_string(val));
       }
-      /* TODO: Check if currency is valid */
+      / * TODO: Check if currency is valid * /
       else if (0 == strncmp(key, "from_currency", sizeof("from_currency"))) {
          printf("\tFROM_CURRENCY: = %s\n", json_object_get_string(val));
       } else if (0 == strncmp(key, "to_currency", sizeof("to_currency"))) {
@@ -108,6 +108,7 @@ static bool parse_foreign_exchange(json_object *obj) {
          break;
       }
    }
+   */
 
    return ok;
 }
@@ -173,7 +174,7 @@ bool stock_custom( void ) {
       }
 
       /* JSON is the only datatype that is being used */
-      strncpy(stock_opers.datatype, "json", sizeof(stock_oper.datatype));
+      //strncpy(stock_opers.datatype, "json", sizeof(stock_opers.datatype));
    } else {
       printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", STOCK_LOOKUP);
       ok = false;
@@ -190,14 +191,14 @@ bool stock_api_custom( void ) {
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
          if (0 == strncmp(key, "url", sizeof("url"))) {
-            istrncpy(stock_opers.url, json_object_get_string(val), sizeof(stock_oper.url));
-            printf("stock_opers.url = %s\n", stock_oper.url);
+            istrncpy(stock_opers.url, json_object_get_string(val), sizeof(stock_opers.url));
+            printf("stock_opers.url = %s\n", stock_opers.url);
          } else if (0 == strncmp(key, "key", sizeof("key"))) {
-            istrncpy(stock_opers.key, json_object_get_string(val), sizeof(stock_oper.key));
-            printf("stock_opers.key = %s\n", stock_oper.key);
+            istrncpy(stock_opers.key, json_object_get_string(val), sizeof(stock_opers.key));
+            printf("stock_opers.key = %s\n", stock_opers.key);
          } else if (0 == strncmp(key, "time_interval", sizeof("udpate_timer"))) {
             stock_opers.time_interval = json_object_get_int(val);
-            printf("stock_opers.time_interval = %d\n", stock_oper.time_interval);
+            printf("stock_opers.time_interval = %d\n", stock_opers.time_interval);
          } else {
             printf("ERR: '%s' is an invalid stock exchange customization file\n", STOCK_LOOKUP);
             ok = false;
@@ -205,7 +206,7 @@ bool stock_api_custom( void ) {
          }
       }
    } else {
-      printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", STOCK_EXCHANGE_API);
+      printf("NOTICE: Reading JSON '%s' failed - error(%m)\n", STOCK_OPERATION);
       ok = false;
    }
 

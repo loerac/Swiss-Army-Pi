@@ -1,14 +1,16 @@
 #ifndef _STOCKS_COMMON_H_
 #define _STOCKS_COMMON_H_
 
+#include <stdlib.h>
+
 typedef enum time_series_function {
    TIME_SERIES_INTRADAY = 0,
    TIME_SERIES_DAILY,
    TIME_SERIES_DAILY_ADJUSTED,
    TIME_SERIES_WEEKLY,
    TIME_SERIES_WEEKLY_ADJUSTED,
-   TIME_SERIES_MONTH,
-   TIME_SERIES_MONTH_ADJUSTED,
+   TIME_SERIES_MONTHLY,
+   TIME_SERIES_MONTHLY_ADJUSTED,
    TIME_SERIES_GLOBAL_QUOTE,
    MAX_TIME_SERIES_FUNCTION
 } time_series_function_e;
@@ -39,7 +41,7 @@ typedef enum time_series_opsize {
  *    Converts a time series function string format to
  *    a integer format
  **/
-time_series_function_e tsFunctionInt(const char *const function, const size_t function_len);
+time_series_function_e tsFunction_stoi(const char *const function, const size_t function_len);
 
 /**
  * INPUT:
@@ -51,7 +53,7 @@ time_series_function_e tsFunctionInt(const char *const function, const size_t fu
  *    Converts a time series function integer format to
  *    a string format
  **/
-const char *tsFunctionString(time_series_function_e function);
+const char *tsFunction_itos(time_series_function_e function);
 
 /**
  * INPUT:
@@ -64,7 +66,7 @@ const char *tsFunctionString(time_series_function_e function);
  *    Converts a time series interval string format to
  *    a integer format
  **/
-time_series_interval_e tsIntervalInt(const char *const interval, const size_t interval_len);
+time_series_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len);
 
 /**
  * INPUT:
@@ -76,7 +78,7 @@ time_series_interval_e tsIntervalInt(const char *const interval, const size_t in
  *    Converts a time series interval integer format to
  *    a string format
  **/
-const char *tsIntervalString(time_series_interval_e interval);
+const char *tsInterval_itos(time_series_interval_e interval);
 
 /**
  * INPUT:
@@ -89,7 +91,7 @@ const char *tsIntervalString(time_series_interval_e interval);
  *    Converts a time series output size string format to
  *    a integer format
  **/
-time_series_opsize_e tsOpsizeString(const char *const opsize, const size_t opsize_len);
+time_series_opsize_e tsOpsize_stoi(const char *const opsize, const size_t opsize_len);
 
 /**
  * INPUT:
@@ -101,6 +103,6 @@ time_series_opsize_e tsOpsizeString(const char *const opsize, const size_t opsiz
  *    Converts a time series output size integer format to
  *    a string format
  **/
-const char *tsOpsizeString(time_series_opsize_e opsize);
+const char *tsOpsize_itos(time_series_opsize_e opsize);
 
 #endif /*_ STOCKS_COMMON_H_ */

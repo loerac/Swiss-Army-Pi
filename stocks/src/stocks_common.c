@@ -3,7 +3,7 @@
 #include <string.h>
 
 /* See stocks_common.h for description */
-time_series_function_e tsFunctionInt(const char *const function, const size_t function_len) {
+time_series_function_e tsFunction_stoi(const char *const function, const size_t function_len) {
    time_series_function_e retval = MAX_TIME_SERIES_FUNCTION;
    if (0 == strncmp(function, "TIME_SERIES_INTRADAY", function_len)) {
       retval = TIME_SERIES_INTRADAY;
@@ -29,7 +29,7 @@ time_series_function_e tsFunctionInt(const char *const function, const size_t fu
 }
 
 /* See stocks_common.h for description */
-const char *tsFunctionString(time_series_function_e function) {
+const char *tsFunction_itos(time_series_function_e function) {
    const char *retval = NULL;
    switch (function) {
       case TIME_SERIES_INTRADAY :
@@ -47,13 +47,13 @@ const char *tsFunctionString(time_series_function_e function) {
       case TIME_SERIES_WEEKLY_ADJUSTED:
          retval = "TIME_SERIES_WEEKLY_ADJUSTED";
          break;
-      case TIME_SERIES_MONTH:
+      case TIME_SERIES_MONTHLY:
          retval = "TIME_SERIES_MONTH";
          break;
-      case TIME_SERIES_MONTH_ADJUSTED:
+      case TIME_SERIES_MONTHLY_ADJUSTED:
          retval = "TIME_SERIES_MONTH_ADJUSTED";
          break;
-      case GLOBAL_QUOTE:
+      case TIME_SERIES_GLOBAL_QUOTE:
          retval = "GLOBAL_QUOTE";
          break;
       default:
@@ -65,7 +65,7 @@ const char *tsFunctionString(time_series_function_e function) {
 }
 
 /* See stocks_common.h for description */
-time_series_interval_e tsIntervalInt(const char *const interval, const size_t interval_len) {
+time_series_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len) {
    time_series_interval_e retval = MAX_TIME_SERIES_INTERVAL;
    if (0 == strncmp(interval, "1min", interval_len)) {
       retval = TIME_SERIES_1_MINUTE;
@@ -85,9 +85,9 @@ time_series_interval_e tsIntervalInt(const char *const interval, const size_t in
 }
 
 /* See stocks_common.h for description */
-const char *tsIntervalString(time_series_interval_e interval) {
+const char *tsInterval_itos(time_series_interval_e interval) {
    const char *retval = NULL;
-   switch (function) {
+   switch (interval) {
       case TIME_SERIES_1_MINUTE:
          retval = "1min";
          break;
@@ -112,7 +112,7 @@ const char *tsIntervalString(time_series_interval_e interval) {
 }
 
 /* See stocks_common.h for description */
-time_series_opsize_e tsOpsizeString(const char *const opsize, const size_t opsize_len) {
+time_series_opsize_e tsOpsize_stoi(const char *const opsize, const size_t opsize_len) {
    time_series_opsize_e retval = MAX_TIME_SERIES_OPSIZE;
    if (0 == strncmp(opsize, "compact", opsize_len)) {
       retval = TIME_SERIES_COMPACT;
@@ -126,9 +126,9 @@ time_series_opsize_e tsOpsizeString(const char *const opsize, const size_t opsiz
 }
 
 /* See stocks_common.h for description */
-const char *tsOpsizeString(time_series_opsize_e opsize) {
+const char *tsOpsize_itos(time_series_opsize_e opsize) {
    const char *retval = NULL;
-   switch (function) {
+   switch (opsize) {
       case TIME_SERIES_COMPACT:
          retval = "compact";
          break;

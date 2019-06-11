@@ -30,12 +30,12 @@ static stocks_operation_s stock_opers = {0};
  *    Adds a new equity to the list
  **/
 static void addEquityStock(const time_series_function_e func, const time_series_interval_e interval,
-                           const time_series_opsize_e opsize, const char *const symbol) {
+                           const bool is_compact, const char *const symbol) {
    time_series_s *ts = calloc(0, sizeof(time_series_s));
    if (NULL != ts) {
       ts->function = func;
       ts->interval = interval;
-      ts->opsize = opsize;
+      ts->is_compact = is_compact;
       istrncpy(ts->symbol, symbol, sizeof(ts->symbol));
 
       equity_list = slistPrepend(equity_list, ts);
@@ -58,7 +58,7 @@ static void addEquityStock(const time_series_function_e func, const time_series_
 static bool parseStockTimeSeries(json_object *obj) {
    bool ok = true;
    const char *symbol = NULL;
-   time_series_opsize_e opsize = MAX_TIME_SERIES_OPSIZE;
+   bool is_compact = true;
    time_series_function_e function = MAX_TIME_SERIES_FUNCTION;
    time_series_interval_e interval = MAX_TIME_SERIES_INTERVAL;
 
@@ -73,8 +73,7 @@ static bool parseStockTimeSeries(json_object *obj) {
          ok = (MAX_TIME_SERIES_INTERVAL != interval);
          printf("\tINTERVAL: = %s\n", json_object_get_string(val));
       } else if (0 == strncmp(key, "outputsize", sizeof("outputsize"))) {
-         opsize = tsOpsize_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
-         ok = (MAX_TIME_SERIES_OPSIZE != opsize);
+         is_compact = tsOpsize_stob(json_object_get_string(val), strlen(json_object_get_string(val)));
          printf("\tOUTPUTSIZE: = %s\n", json_object_get_string(val));
       } else if ( (0 == strncmp(key, "symbol", sizeof("symbol"))) &&
                   (0 < strlen(json_object_get_string(val))) ) {
@@ -92,7 +91,7 @@ static bool parseStockTimeSeries(json_object *obj) {
    }
 
    if (ok) {
-      addEquityStock(function, interval, opsize, symbol);
+      addEquityStock(function, interval, is_compact, symbol);
    }
 
    return ok;
@@ -246,4 +245,14 @@ bool stock_api_custom( void ) {
    }
 
    return ok;
+}
+
+/* See stocks_custom.h for description */
+slist_s *getStockEquity( void ) {
+   return equity_list;
+}
+
+/* See stocks_custom.h for description */
+stocks_operation_s getAPIOperation( void ) {
+   return stock_opers;
 }

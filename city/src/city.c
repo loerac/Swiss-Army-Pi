@@ -1,18 +1,52 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "ftp.h"
 #include "city.h"
-#include "city_curl.h"
+#include "city_ftp.h"
 #include "city_parse.h"
 #include "city_types.h"
 #include "city_custom.h"
 #include "net_api.h"
 
-#define CITY_CUSTOM  "/custom/city/city.json"
-#define CITY_URL     "/custom/city/url.json"
+#define CITY_CUSTOM     "/SAP/custom/city/city.json"
+#define CITY_OPERATION  "/SAP/conf/city/city_operation.json"
 
-static url_config_s  url = { '\0' };
-static city_map_s    map = { '\0' };
+static ftp_info_s *ftp = NULL;
+static city_operation_s oper = {0};
+static city_map_s map = {0};
+
+/**********************************************
+ * INPUT:
+ *    NONE
+ * OUTPUT:
+ *    NONE
+ * RETURN:
+ *    True if the URL is configured, else false.
+ * DESCRIPTION:
+ *    Configures the URL from the city.json and
+ *    the city_operation.json customization file.
+ **********************************************/
+static bool urlConfiguration(const city_operation_s *oper) {
+   bool ok = false;
+   slist_s *format_list = get_format();
+   slist_s *search_list = get_location();
+
+   if (NULL != search_list) {
+      const city_search_s *search = (city_search_s *)search_list->data;
+      char format_str[27] = {0};
+      while (NULL != format_list) {
+         const city_format_s *format = (city_format_s *)format_list->data;
+         (void)strncat(format_str, format->data, format->size);
+         format_list = slistNext(format_list);
+      }
+      isnprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", oper->url, search->data, format_str, oper->key, '\0');
+      printf("URL STRING: %s\n", url_str);
+      ok = ftpGet(&ftp, url_str);
+   }
+
+   return ok;
+}
 
 /**********************************************
  * INPUT:
@@ -26,32 +60,25 @@ static city_map_s    map = { '\0' };
  *    Configures the URL and MAP of the city.
  **********************************************/
 city_init_e cityInit( void ) {
-   bool ok = true;
    city_init_e status = CITY_OK;
 
-   ok = city_city_custom(CITY_CUSTOM);
-   if (ok) {
-      ok = city_url_custom(CITY_URL, &url);
-   } else {
-      status = CITY_CITY_CUSTOM;
-   }
-
    if (netInit() && internetAvail()) {
-      if (ok) {
-         ok = weatherURL(&url);
-      } else {
-         status = CITY_URL_CUSTOM;
+      status = (city_city_custom(CITY_CUSTOM)) ? CITY_OK : CITY_CITY_CUSTOM;
+
+      if (CITY_OK == status) {
+         status = (city_url_custom(CITY_OPERATION, &oper)) ? CITY_OK : CITY_URL_CUSTOM;
       }
 
-      if (ok) {
-         ok = jsonConfig(&map);
-      } else {
-         status = CITY_WEATHER_URL;
+      if (CITY_OK == status) {
+         status = (urlConfiguration(&oper)) ? CITY_OK : CITY_WEATHER_URL;
       }
 
-      if (!ok) {
-         status = CITY_WEATHER_PARSE;
+      if (CITY_OK == status) {
+         status = (jsonConfig(&map, &ftp)) ? CITY_OK : CITY_WEATHER_PARSE;
       }
+   } else {
+      status = CITY_OK_NO_INTERNET;
+      printf("No internet available, exiting\n");
    }
 
    return status;

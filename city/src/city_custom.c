@@ -1,3 +1,7 @@
+#include "city.h"
+#include "type_compat.h"
+#include "city_custom.h"
+
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,11 +9,8 @@
 #include <sys/types.h>
 #include <json-c/json.h>
 
-#include "city.h"
-#include "city_custom.h"
-
-static city_list_s *format_list = NULL;
-static city_list_s *location_list = NULL;
+static slist_s *format_list = NULL;
+static slist_s *location_list = NULL;
 
 /**********************************************
  * INPUT:
@@ -34,10 +35,10 @@ static bool add_format(const char *const data, const int size, const city_format
    if (NULL == city) {
       printf("EMERG: Allocating memory failed - error(%m)\n");
    } else {
-      (void)strncpy(city->data, data, sizeof(city->data));
+      istrncpy(city->data, data, sizeof(city->data));
       city->size = size;
       city->format = format;
-      format_list = city_list_add(format_list, city);
+      format_list = slistPrepend(format_list, city);
       ok = true;
    }
 
@@ -67,10 +68,13 @@ static bool add_location(const char *const data, const int size, const city_sear
    if (NULL == city) {
       printf("EMERG: Allocating memory failed - error(%m)\n");
    } else {
-      (void)strncpy(city->data, data, sizeof(city->data));
+      istrncpy(city->data, data, sizeof(city->data));
       city->size = size;
       city->search = search;
-      location_list = city_list_add(location_list, city);
+      location_list = slistPrepend(location_list, city);
+      if (NULL == location_list) {
+         printf("list is nothing\n");
+      }
       ok = true;
    }
 
@@ -234,16 +238,18 @@ bool city_city_custom(const char *const json) {
 /**********************************************
  * See city_custom.h for description.
  **********************************************/
-bool city_url_custom(const char *const json, url_config_s *url) {
+bool city_url_custom(const char *const json, city_operation_s *oper) {
    bool ok = true;
 
    json_object *obj = json_object_from_file(json);
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
          if (0 == strncmp(key, "url", sizeof("url"))) {
-            (void)strncpy(url->url, json_object_get_string(val), sizeof(url->url));
+            istrncpy(oper->url, json_object_get_string(val), sizeof(oper->url));
          } else if (0 == strncmp(key, "key", sizeof("key"))) {
-            (void)strncpy(url->key, json_object_get_string(val), sizeof(url->key));
+            istrncpy(oper->key, json_object_get_string(val), sizeof(oper->key));
+         } else if (0 == strncmp(key, "time_interval", sizeof("time_interval"))) {
+            oper->time_interval = json_object_get_int(val);
          } else {
             ok = false;
             printf("Unknown key: %s\n", key);
@@ -260,13 +266,13 @@ bool city_url_custom(const char *const json, url_config_s *url) {
 /**********************************************
  * See city_custom.h for description.
  **********************************************/
-city_list_s *get_format( void ) {
+slist_s *get_format( void ) {
    return format_list;
 }
 
 /**********************************************
  * See city_custom.h for description.
  **********************************************/
-city_list_s *get_location( void ) {
+slist_s *get_location( void ) {
    return location_list;
 }

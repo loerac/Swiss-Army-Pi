@@ -8,7 +8,8 @@ typedef enum city_init {
    CITY_CITY_CUSTOM,
    CITY_URL_CUSTOM,
    CITY_WEATHER_URL,
-   CITY_WEATHER_PARSE
+   CITY_WEATHER_PARSE,
+   CITY_OK_NO_INTERNET
 } city_init_e;
 
 typedef enum city_search {

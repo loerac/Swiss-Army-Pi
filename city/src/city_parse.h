@@ -1,10 +1,11 @@
 #ifndef _CITY_PARSEH_
 #define _CITY_PARSEH_
 
-#include <stdbool.h>
-
+#include "ftp.h"
 #include "city.h"
 #include "city_types.h"
+
+#include <stdbool.h>
 
 /**********************************************
  * INTPUT:
@@ -17,6 +18,6 @@
  * DESCRIPTION:
  *    Parses the returned data from https://openweathermap.org/
  **********************************************/
-bool jsonConfig(city_map_s *map);
+bool jsonConfig(city_map_s *map, ftp_info_s *ftp);
 
 #endif

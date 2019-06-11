@@ -27,12 +27,13 @@
 #define MAX_BASE_PAR_LEN         64U
 #define MAX_CITY_NAME_LEN        256U
 
-typedef struct url_config {
+typedef struct city_operation {
+   int time_interval;
    char url[MAX_URL_LEN + 1];
    char key[MAX_KEY_LEN + 1];
    char search[MAX_LOCATION_LEN + 1];
    char format[MAX_FORMAT_LEN + 1];
-} url_config_s;
+} city_operation_s;
 
 typedef struct city_coord {
    float lon;

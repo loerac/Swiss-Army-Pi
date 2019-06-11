@@ -2,6 +2,7 @@
 #define _STOCKS_COMMON_H_
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef enum time_series_function {
    TIME_SERIES_INTRADAY = 0,
@@ -91,18 +92,25 @@ const char *tsInterval_itos(time_series_interval_e interval);
  *    Converts a time series output size string format to
  *    a integer format
  **/
-time_series_opsize_e tsOpsize_stoi(const char *const opsize, const size_t opsize_len);
+bool tsOpsize_stob(const char *const opsize, const size_t opsize_len);
 
 /**
  * INPUT:
- *    opsize - time series output size in integer format
+ *    is_compact - true if output size is "compact"
  * RETURN:
  *    On success, the time series output size string value.
  *    On failure, invalid time series output size string value.
  * DESCRIPTION:
- *    Converts a time series output size integer format to
- *    a string format
+ *    Converts the boolean "is_compact" value to string
  **/
-const char *tsOpsize_itos(time_series_opsize_e opsize);
+const char *tsOpsize_btos(const bool is_compact);
+
+/**
+ * RETURN:
+ *    Alpha Vantage API URL
+ * DESCRIPTION:
+ *    See RETURN for description
+ **/
+const char *const getAPIURL( void );
 
 #endif /*_ STOCKS_COMMON_H_ */

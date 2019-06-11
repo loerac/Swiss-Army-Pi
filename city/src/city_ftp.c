@@ -1,5 +1,5 @@
 #include "slist.h"
-#include "city_curl.h"
+#include "city_ftp.h"
 #include "city_types.h"
 #include "city_custom.h"
 #include "type_compat.h"
@@ -83,9 +83,7 @@ static bool url_configuration(const url_config_s *url) {
    return ok;
 }
 
-/**********************************************
- * See city_curl.h for description.
- **********************************************/
+/* See city_ftp.h for description. */
 bool weatherURL(const url_config_s *url) {
    CURLcode res;
    CURL *curl_handle;
@@ -120,16 +118,12 @@ bool weatherURL(const url_config_s *url) {
 }
 
 
-/**********************************************
- * See city_curl.h for description.
- **********************************************/
+/* See city_ftp.h for description. */
 const city_info_s getCityInfo( void ) {
    return city;
 }
 
-/**********************************************
- * See city_curl.h for description.
- **********************************************/
+/* See city_ftp.h for description. */
 void destroyCity( void ) {
    if ( city.data[0] != '\0' ) {
       free(city.data);

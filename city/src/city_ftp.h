@@ -1,5 +1,5 @@
-#ifndef _CITY_CURLH_
-#define _CITY_CURLH_
+#ifndef _CITY_FTP_H_
+#define _CITY_FTP_H_
 
 #include <stdbool.h>
 #include <curl/curl.h>
@@ -50,4 +50,5 @@ const city_info_s getCityInfo( void );
  **********************************************/
 void destroyCity( void );
 
-#endif
+#endif /* _CITY_FTP_H_ */
+

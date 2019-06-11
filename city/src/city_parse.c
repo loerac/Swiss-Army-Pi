@@ -4,7 +4,7 @@
 #include <json-c/json.h>
 
 #include "city.h"
-#include "city_curl.h"
+#include "city_ftp.h"
 #include "city_parse.h"
 
 /**********************************************

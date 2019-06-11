@@ -1,6 +1,7 @@
 #ifndef _STOCKS_CUSTOM_H_
 #define _STOCKS_CUSTOM_H_
 
+#include "slist.h"
 #include "stocks_common.h"
 
 #include <stdbool.h>
@@ -22,11 +23,11 @@ typedef struct stocks_operation {
 typedef struct time_series {
    time_series_function_e function;
    time_series_interval_e interval;
-   time_series_opsize_e opsize;
+   bool is_compact;
    char symbol[MAX_TICKER_SYMBOL_LEN + 1U];
 } time_series_s;
 
-/**********************************************
+/**
  * INPUT:
  *    NONE
  *
@@ -39,10 +40,10 @@ typedef struct time_series {
  *
  * DESCRIPTION:
  *    Parses the customized stock exchange file.
- **********************************************/
+ **/
 bool stock_custom( void );
 
-/**********************************************
+/**
  * INPUT:
  *    NONE
  *
@@ -55,8 +56,24 @@ bool stock_custom( void );
  *
  * DESCRIPTION:
  *    Parses the URL API stock exchange.
- **********************************************/
+ **/
 bool stock_api_custom( void );
+
+/**
+ * RETURN:
+ *    slist_s* of the stock equitys
+ * DESCRIPTION:
+ *    See RETURN for description
+ **/
+slist_s *getStockEquity( void );
+
+/**
+ * RETURN:
+ *    stocks_operation_s of the API information
+ * DESCRIPTION:
+ *    See RETURN for description
+ **/
+stocks_operation_s getAPIOperation( void );
 
 #endif /* _STOCKS_CUSTOM_H_ */
 

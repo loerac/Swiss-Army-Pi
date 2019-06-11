@@ -1,6 +1,8 @@
 #include <stdio.h>
 
 #include "stocks.h"
+#include "net_api.h"
+#include "stocks_ftp.h"
 #include "stocks_custom.h"
 
 typedef enum stock_init_status {
@@ -30,6 +32,8 @@ int main(int argc, char *argv[]) {
       status = STOCK_CUSTOM_INVALID;
    } else if (!stock_api_custom()) {
       status = STOCK_URL_API_INVALID;
+   } else if (netInit() && internetAvail()) {
+      stockEquityURL();
    }
 
    return status;

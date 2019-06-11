@@ -48,10 +48,10 @@ const char *tsFunction_itos(time_series_function_e function) {
          retval = "TIME_SERIES_WEEKLY_ADJUSTED";
          break;
       case TIME_SERIES_MONTHLY:
-         retval = "TIME_SERIES_MONTH";
+         retval = "TIME_SERIES_MONTHLY";
          break;
       case TIME_SERIES_MONTHLY_ADJUSTED:
-         retval = "TIME_SERIES_MONTH_ADJUSTED";
+         retval = "TIME_SERIES_MONTHLY_ADJUSTED";
          break;
       case TIME_SERIES_GLOBAL_QUOTE:
          retval = "GLOBAL_QUOTE";
@@ -112,34 +112,16 @@ const char *tsInterval_itos(time_series_interval_e interval) {
 }
 
 /* See stocks_common.h for description */
-time_series_opsize_e tsOpsize_stoi(const char *const opsize, const size_t opsize_len) {
-   time_series_opsize_e retval = MAX_TIME_SERIES_OPSIZE;
-   if (0 == strncmp(opsize, "compact", opsize_len)) {
-      retval = TIME_SERIES_COMPACT;
-   } else if (0 == strncmp(opsize, "full", opsize_len)) {
-      retval = TIME_SERIES_FULL;
-   } else {
-      // Intentional empty statement
-   }
-
-   return retval;
+bool tsOpsize_stob(const char *const opsize, const size_t opsize_len) {
+   return (0 == strncmp(opsize, "compact", opsize_len));
 }
 
 /* See stocks_common.h for description */
-const char *tsOpsize_itos(time_series_opsize_e opsize) {
-   const char *retval = NULL;
-   switch (opsize) {
-      case TIME_SERIES_COMPACT:
-         retval = "compact";
-         break;
-      case TIME_SERIES_FULL:
-         retval = "full";
-         break;
-      default:
-         retval = "ERROR";
-         break;
-   }
-
-   return retval;
+const char *tsOpsize_btos(const bool is_compact) {
+   return (is_compact) ? "compact":"full";
 }
 
+/* See stocks_common.h for description */
+const char *const getAPIURL( void ) {
+   return "https://www.alphavantage.co/query?";
+}

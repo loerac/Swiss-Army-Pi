@@ -37,7 +37,7 @@ bool city_city_custom(const char *const json);
 /**********************************************
  * INPUT:
  *    json
- *       url.json file that defines the
+ *       city_operation.json file that defines the
  *       openweathermap.org URL and key
  * OUTPUT:
  *    url

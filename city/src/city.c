@@ -9,7 +9,7 @@
 #include "net_api.h"
 
 #define CITY_CUSTOM  "/SAP/custom/city/city.json"
-#define CITY_URL     "/SAP/conf/city/url.json"
+#define CITY_OPERATION     "/SAP/conf/city/city_operation.json"
 
 static url_config_s  url = { '\0' };
 static city_map_s    map = { '\0' };
@@ -32,7 +32,7 @@ city_init_e cityInit( void ) {
       status = (city_city_custom(CITY_CUSTOM)) ? CITY_OK : CITY_CITY_CUSTOM;
 
       if (CITY_OK == status) {
-         status = (city_url_custom(CITY_URL, &url)) ? CITY_OK : CITY_URL_CUSTOM;
+         status = (city_url_custom(CITY_OPERATION, &url)) ? CITY_OK : CITY_URL_CUSTOM;
       }
 
       if (CITY_OK == status) {

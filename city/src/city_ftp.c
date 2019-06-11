@@ -60,7 +60,7 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb, void *us
  *    True if the URL is configured, else false.
  * DESCRIPTION:
  *    Configures the URL from the city.json and
- *    the url.json customization file.
+ *    the city_operation.json customization file.
  **********************************************/
 static bool url_configuration(const url_config_s *url) {
    bool ok = false;

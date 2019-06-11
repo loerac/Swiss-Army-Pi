@@ -17,6 +17,7 @@ static slist_s *equity_list = NULL;
 
 typedef bool (*stock_callback)(json_object*);
 static stocks_operation_s stock_opers = {0};
+static unsigned int total_equities = 0;
 
 /**
  * INPUT:
@@ -31,16 +32,21 @@ static stocks_operation_s stock_opers = {0};
  **/
 static void addEquityStock(const time_series_function_e func, const time_series_interval_e interval,
                            const bool is_compact, const char *const symbol) {
-   time_series_s *ts = calloc(0, sizeof(time_series_s));
-   if (NULL != ts) {
-      ts->function = func;
-      ts->interval = interval;
-      ts->is_compact = is_compact;
-      istrncpy(ts->symbol, symbol, sizeof(ts->symbol));
-
-      equity_list = slistPrepend(equity_list, ts);
+   if (MAX_STOCK_EQUITIES == total_equities) {
+      printf("NOTICE: Reached limit of stock equites, cannot add anymore\n");
    } else {
-      printf("EMERG: Allocating memory failed - %m");
+      time_series_s *ts = calloc(0, sizeof(time_series_s));
+      if (NULL != ts) {
+         ts->function = func;
+         ts->interval = interval;
+         ts->is_compact = is_compact;
+         istrncpy(ts->symbol, symbol, sizeof(ts->symbol));
+
+         equity_list = slistPrepend(equity_list, ts);
+         total_equities++;
+      } else {
+         printf("EMERG: Allocating memory failed - %m");
+      }
    }
 }
 

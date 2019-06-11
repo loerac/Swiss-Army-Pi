@@ -12,7 +12,10 @@
 #define MAX_TICKER_SYMBOL_LEN 5U
 
 /* Max stock markets to monitor */
-#define MAX_STOCK_MARKETS     10U
+// TODO: For now, only hold 5 equities until
+// able to wait 5 minutes (time library???)
+//#define MAX_STOCK_EQUITIES    10U
+#define MAX_STOCK_EQUITIES    5U
 
 typedef struct stocks_operation {
    int time_interval;

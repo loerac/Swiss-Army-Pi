@@ -8,8 +8,8 @@
 #include "city_custom.h"
 #include "net_api.h"
 
-#define CITY_CUSTOM  "/custom/city/city.json"
-#define CITY_URL     "/custom/city/url.json"
+#define CITY_CUSTOM  "/SAP/custom/city/city.json"
+#define CITY_URL     "/SAP/conf/city/url.json"
 
 static url_config_s  url = { '\0' };
 static city_map_s    map = { '\0' };

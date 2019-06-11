@@ -3,6 +3,7 @@
 include $(addsuffix /flags.mk, $(addprefix $(TOPDIR)/,$(all_dirs)))
 
 export OUTPUT_BIN = $(CURDIR)/bin
+export OUTPUT_DATA = $(CURDIR)/data
 
 BUILD = src include
 all: $(BUILD)
@@ -14,8 +15,14 @@ src:
 install:
 	$(MAKE) -C src $(@F)
 
+install_data:
+	$(MAKE) -C data $(@F)
+
 uninstall:
 	$(MAKE) -C src $(@F)
+
+uninstall_data:
+	$(MAKE) -C data $(@F)
 
 .PHONY: clean
 clean:

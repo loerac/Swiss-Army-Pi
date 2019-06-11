@@ -10,13 +10,39 @@
 #include <stdlib.h>
 #include <json-c/json.h>
 
-#define STOCK_LOOKUP    "/custom/stocks/stock_lookup.json"
-#define STOCK_OPERATION "/custom/stocks/stock_operation.json"
+#define STOCK_LOOKUP    "/SAP/custom/stocks/stock_lookup.json"
+#define STOCK_OPERATION "/SAP/conf/stocks/stock_operation.json"
 
-static slist_s *stock_list = NULL;
+static slist_s *equity_list = NULL;
 
 typedef bool (*stock_callback)(json_object*);
 static stocks_operation_s stock_opers = {0};
+
+/**
+ * INPUT:
+ *    func - stock time series function command
+ *    interval - time interval
+ *    opsize - size of the data points
+ *    symbol - name of the equity
+ * RETURN:
+ *    NONE
+ * DESCRIPTION:
+ *    Adds a new equity to the list
+ **/
+static void addEquityStock(const time_series_function_e func, const time_series_interval_e interval,
+                           const time_series_opsize_e opsize, const char *const symbol) {
+   time_series_s *ts = calloc(0, sizeof(time_series_s));
+   if (NULL != ts) {
+      ts->function = func;
+      ts->interval = interval;
+      ts->opsize = opsize;
+      istrncpy(ts->symbol, symbol, sizeof(ts->symbol));
+
+      equity_list = slistPrepend(equity_list, ts);
+   } else {
+      printf("EMERG: Allocating memory failed - %m");
+   }
+}
 
 /**
  * INPUT:
@@ -29,25 +55,30 @@ static stocks_operation_s stock_opers = {0};
  * DESCRIPTION:
  *    Parses the stock time series
  **/
-static bool parse_stock_time_series(json_object *obj) {
+static bool parseStockTimeSeries(json_object *obj) {
    bool ok = true;
+   const char *symbol = NULL;
+   time_series_opsize_e opsize = MAX_TIME_SERIES_OPSIZE;
+   time_series_function_e function = MAX_TIME_SERIES_FUNCTION;
+   time_series_interval_e interval = MAX_TIME_SERIES_INTERVAL;
 
    printf("STOCK TIME SERIES:\n");
    json_object_object_foreach(obj, key, val) {
       if (0 == strncmp(key, "function", sizeof("function"))) {
-         time_series_function_e function = tsFunction_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
+         function = tsFunction_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
          ok = (MAX_TIME_SERIES_FUNCTION != function);
          printf("\tFUNCTION: = %s\n", json_object_get_string(val));
       }  else if (0 == strncmp(key, "interval", sizeof("interval"))) {
-         time_series_interval_e interval = tsInterval_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
+         interval = tsInterval_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
          ok = (MAX_TIME_SERIES_INTERVAL != interval);
          printf("\tINTERVAL: = %s\n", json_object_get_string(val));
       } else if (0 == strncmp(key, "outputsize", sizeof("outputsize"))) {
-         time_series_opsize_e opsize = tsOpsize_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
+         opsize = tsOpsize_stoi(json_object_get_string(val), strlen(json_object_get_string(val)));
          ok = (MAX_TIME_SERIES_OPSIZE != opsize);
          printf("\tOUTPUTSIZE: = %s\n", json_object_get_string(val));
       } else if ( (0 == strncmp(key, "symbol", sizeof("symbol"))) &&
                   (0 < strlen(json_object_get_string(val))) ) {
+         symbol = json_object_get_string(val);
          printf("\tSYMBOL: = %s\n", json_object_get_string(val));
       } else {
          // Invalid key found in JSON file
@@ -58,6 +89,10 @@ static bool parse_stock_time_series(json_object *obj) {
          printf("ERR: '%s' is an invalid stock exchange customization file\n", STOCK_LOOKUP);
          break;
       }
+   }
+
+   if (ok) {
+      addEquityStock(function, interval, opsize, symbol);
    }
 
    return ok;
@@ -74,7 +109,7 @@ static bool parse_stock_time_series(json_object *obj) {
  * DESCRIPTION:
  *    Parses the foreign exchange
  **/
-static bool parse_foreign_exchange(json_object *obj) {
+static bool parseForeignExchange(json_object *obj) {
    bool ok = true;
 
    /* TODO: Create common converter for the foreign exchange * /
@@ -127,7 +162,7 @@ static bool parse_foreign_exchange(json_object *obj) {
  * DESCRIPTION:
  *    Iterate through the array
  **/
-static bool parse_lookup_callback(json_object *obj, const char * const key, stock_callback cb) {
+static bool parseLookupCallback(json_object *obj, const char * const key, stock_callback cb) {
    bool ok = true;
    json_object *json_array = obj;
    if (NULL != key) {
@@ -157,10 +192,10 @@ bool stock_custom( void ) {
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
          if (0 == strncmp(key, "stock_time_series", sizeof("stock_time_series")) ) {
-            ok = parse_lookup_callback(obj, key, parse_stock_time_series);
+            ok = parseLookupCallback(obj, key, parseStockTimeSeries);
             if (!ok) { break; }
          } else if (0 == strncmp(key, "foreign_exchange", sizeof("foreign_exchange")) ) {
-            ok = parse_lookup_callback(obj, key, parse_foreign_exchange);
+            ok = parseLookupCallback(obj, key, parseForeignExchange);
             if (!ok) { break; }
          } else if ( (0 == strncmp(key, "sector_performance", sizeof("sector_performance"))) &&
                      (0 == strncmp(json_object_get_string(val), "SECTOR", sizeof("SECTOR"))) ) {

@@ -3,6 +3,17 @@ export TOPDIR=$(realpath $(shell pwd) )
 
 export all_dirs = common_libraries city stocks
 
+# Directories
+export SAP	= /SAP
+export CUST	= $(SAP)/custom
+export CONF	= $(SAP)/conf
+export CITY_CUST = $(CUST)/city
+export CITY_CONF = $(CONF)/city
+export STOCK_CUST = $(CUST)/stocks
+export STOCK_CONF = $(CONF)/stocks
+
+all_files = CITY_CUST CITY_CONF STOCK_CUST STOCK_CONF
+
 .PHONY: all
 all: $(LIB_TARGET)
 	$(MAKE) -C common_libraries $(@F)
@@ -13,9 +24,19 @@ all: $(LIB_TARGET)
 install: $(LIB_TARGET)
 	$(MAKE) -C common_libraries $(@F)
 
+.PHONY: install_data
+install_data: $(LIB_TARGET)
+	$(MAKE) -C city $(@F)
+	$(MAKE) -C stocks $(@F)
+
 .PHONY: uninstall
 uninstall: $(LIB_TARGET)
 	$(MAKE) -C common_libraries $(@F)
+
+.PHONY: uninstall_data
+uninstall_data: $(LIB_TARGET)
+	$(MAKE) -C city $(@F)
+	$(MAKE) -C stocks $(@F)
 
 .PHONY: clean
 clean:
@@ -23,3 +44,12 @@ clean:
 		$(MAKE) -C $$dir clean; \
 	done
 
+.PHONY: configure
+configure:
+	@echo "Configuring the customization and configuration directories"
+	@for dir in $(all_files); do \
+		if [ ! -d $$dir ]; then \
+		       mkdir -p $$dir; \
+		fi; \
+	done
+	@echo "Complete!"

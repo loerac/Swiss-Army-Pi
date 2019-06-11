@@ -45,10 +45,22 @@ install:
 	$(CP) -t $(EXPORT_INC) $(addprefix $(OUTPUT_INC)/,$(LIB_INCLUDE))
 	@echo
 
+.PHONY: install_data
+install_data:
+	$(CP) -t $(TARGET_CUST) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CUST))
+	$(CP) -t $(TARGET_CONF) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CONF))
+	@echo
+
 .PHONY: uninstall
 uninstall:
 	$(RM) $(EXPORT_LIB)/$(TARGET).$(TYPE)
 	$(RM) $(addprefix $(EXPORT_INC)/,$(LIB_INCLUDE))
+	@echo
+
+.PHONY: uninstall_data
+uninstall_data:
+	$(RM) $(addprefix $(TARGET_CUST)/,$(TARGET_DATA_CUST))
+	$(RM) $(addprefix $(TARGET_CONF)/,$(TARGET_DATA_CONF))
 	@echo
 
 # Compile and generate dependency info

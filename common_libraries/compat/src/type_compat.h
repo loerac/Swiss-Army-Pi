@@ -6,6 +6,7 @@
 
 #define istrcpy   (void)strcpy
 #define istrncpy  (void)strncpy
+#define istrncat  (void)strncat
 #define isprintf  (void)sprintf
 #define isnprintf (void)snprintf
 

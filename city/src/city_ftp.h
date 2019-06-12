@@ -22,10 +22,10 @@ typedef struct city_info {
  *    True if data retrieve ok, else false.
  * DESCRIPTION:
  *    Retrieves the data from https://openweathermap.org
- **********************************************/
-bool weatherURL(const url_config_s *url);
+ ********************************************** /
+bool weatherURL(const city_operation_s *oper);
 
-/**********************************************
+/ **********************************************
  * INPUT:
  *    NONE
  * OUTPUT:
@@ -35,10 +35,10 @@ bool weatherURL(const url_config_s *url);
  *    NULL if invalid.
  * DESCRIPTION:
  *    See RETURN for description.
- **********************************************/
+ ********************************************** /
 const city_info_s getCityInfo( void );
 
-/**********************************************
+/ **********************************************
  * INPUT:
  *    NONE
  * OUTPUT:
@@ -47,8 +47,9 @@ const city_info_s getCityInfo( void );
  *    NONE
  * DESCRIPTION:
  *    Sets the city_info to NULL.
- **********************************************/
+ ********************************************** /
 void destroyCity( void );
+*/
 
 #endif /* _CITY_FTP_H_ */
 

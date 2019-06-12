@@ -10,3 +10,6 @@ export slist_ldflags = -L$(COMMDIR)/linked_list/lib/ -lslist
 export net_cflags = -I$(COMMDIR)/net/include/
 export net_ldflags = -L$(COMMDIR)/net/lib/ -lnet
 
+export ftp_cflags = -I$(COMMDIR)/ftp/include/
+export ftp_ldflags = -L$(COMMDIR)/ftp/lib/ -lftp
+

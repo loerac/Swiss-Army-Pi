@@ -238,16 +238,18 @@ bool city_city_custom(const char *const json) {
 /**********************************************
  * See city_custom.h for description.
  **********************************************/
-bool city_url_custom(const char *const json, url_config_s *url) {
+bool city_url_custom(const char *const json, city_operation_s *oper) {
    bool ok = true;
 
    json_object *obj = json_object_from_file(json);
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
          if (0 == strncmp(key, "url", sizeof("url"))) {
-            istrncpy(url->url, json_object_get_string(val), sizeof(url->url));
+            istrncpy(oper->url, json_object_get_string(val), sizeof(oper->url));
          } else if (0 == strncmp(key, "key", sizeof("key"))) {
-            istrncpy(url->key, json_object_get_string(val), sizeof(url->key));
+            istrncpy(oper->key, json_object_get_string(val), sizeof(oper->key));
+         } else if (0 == strncmp(key, "time_interval", sizeof("time_interval"))) {
+            oper->time_interval = json_object_get_int(val);
          } else {
             ok = false;
             printf("Unknown key: %s\n", key);

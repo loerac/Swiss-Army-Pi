@@ -329,18 +329,14 @@ static bool jsonSys(json_object *jb, city_map_s *map) {
    return ok;
 }
 
-/**********************************************
- * See city_parse.h for description.
- **********************************************/
-bool jsonConfig(city_map_s *map) {
-   bool ok = false;
-   city_info_s info = getCityInfo();
+/* See city_parse.h for description. */
+bool jsonConfig(city_map_s *map, ftp_info_s ftp) {
+   bool ok = true;
 
-   if (  (!info.valid) ||
-         (info.data == NULL) ) {
+   if (  (!ftp.valid) || (ftp.data == NULL) ) {
       printf("No data available\n");
    } else {
-      json_object *obj = json_tokener_parse(info.data);
+      json_object *obj = json_tokener_parse(ftp.data);
       json_object_object_foreach(obj, key, val) {
          if (strncmp(key, "coord", sizeof("coord")) == 0) {
             json_object *new_obj = json_object_object_get(obj, key);
@@ -385,12 +381,15 @@ bool jsonConfig(city_map_s *map) {
             map->misc.cod = json_object_get_int64(val);
             printf("cod: %ld\n", map->misc.cod);
          }
-      }
-   }
 
-   // City info is not needed any more,
-   // memory can be freed.
-   destroyCity();
+         if (!ok) {
+            break;
+         }
+      }
+
+      // FTP info is not needed any more, memory can be freed.
+      ftpDestroyInfo(&ftp);
+   }
 
    return ok;
 }

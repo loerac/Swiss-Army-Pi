@@ -49,7 +49,7 @@ bool city_city_custom(const char *const json);
  * DESCRIPTION:
  *    See RETURN for description.
  **********************************************/
-bool city_url_custom(const char *const json, url_config_s *url);
+bool city_url_custom(const char *const json, city_operation_s *oper);
 
 /**********************************************
  * INPUT:

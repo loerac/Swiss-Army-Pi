@@ -7,6 +7,7 @@
 #include "city_parse.h"
 #include "city_types.h"
 #include "city_custom.h"
+#include "type_compat.h"
 #include "net_api.h"
 
 #define CITY_CUSTOM     "/SAP/custom/city/city.json"
@@ -15,6 +16,7 @@
 static ftp_info_s *ftp = NULL;
 static city_operation_s oper = {0};
 static city_map_s map = {0};
+static char url_str[512U] = {0};
 
 /**********************************************
  * INPUT:
@@ -37,7 +39,7 @@ static bool urlConfiguration(const city_operation_s *oper) {
       char format_str[27] = {0};
       while (NULL != format_list) {
          const city_format_s *format = (city_format_s *)format_list->data;
-         (void)strncat(format_str, format->data, format->size);
+         istrncat(format_str, format->data, format->size);
          format_list = slistNext(format_list);
       }
       isnprintf(url_str, sizeof(url_str), "%s%s%s&appid=%s%c", oper->url, search->data, format_str, oper->key, '\0');

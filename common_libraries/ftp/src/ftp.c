@@ -1,5 +1,5 @@
 #include "ftp.h"
-#include "type_compact.h"
+#include "type_compat.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -42,7 +42,7 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
 /* See ftp.h for description */
 bool ftpGet(ftp_info_s **ftp, const char *const url) {
    CURL *curl_handle = NULL;
-   CURLcode res = CURLE_FAILED_INIT;
+   CURLcode result = CURLE_FAILED_INIT;
 
    // Initialize cURL
    curl_global_init(CURL_GLOBAL_ALL);
@@ -56,8 +56,8 @@ bool ftpGet(ftp_info_s **ftp, const char *const url) {
          curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
          result = curl_easy_perform(curl_handle);
 
-         if (CURLE_OK != res) {
-            printf("ERR: curl_easy_perform(%m)\n", curl_easy_strerror(res));
+         if (CURLE_OK != result) {
+            printf("ERR: curl_easy_perform(%s)\n", curl_easy_strerror(result));
          }
          curl_easy_cleanup(curl_handle);
          curl_global_cleanup();
@@ -68,15 +68,15 @@ bool ftpGet(ftp_info_s **ftp, const char *const url) {
       printf("NOTICE: Failed to initialize cURL\n");
    }
 
-   return (CURLE_OK == res);
+   return (CURLE_OK == result);
 }
 
 /* See ftp.h for description */
 void ftpDestroyInfo(ftp_info_s **ftp) {
-   if ('\0' != *ftp->data[0]) {
-      free(*ftp->data);
+   if ('\0' != (*ftp)->data[0]) {
+      free((*ftp)->data);
    }
-   *ftp->data = NULL;
-   *ftp->size = 0;
-   *ftp->valid = false;
+   (*ftp)->data = NULL;
+   (*ftp)->size = 0;
+   (*ftp)->valid = false;
 }

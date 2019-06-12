@@ -50,13 +50,9 @@ bool ftpGet(ftp_info_s *ftp, char *url) {
 
    if (NULL != curl_handle) {
       if ('\0' != url[0]) {
-         printf("url\n");
          curl_easy_setopt(curl_handle, CURLOPT_URL, url);
-         printf("writefunction\n");
          curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, writeCallback);
-         printf("writedata\n");
          curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)ftp);
-         printf("useragent\n");
          curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, "libcurl-agent/1.0");
          result = curl_easy_perform(curl_handle);
 

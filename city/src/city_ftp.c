@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-static char url_str[512U] = {0};
-static city_info_s city = { '\0' };
+//static char url_str[512U] = {0};
+//static city_info_s city = { '\0' };
 
 /**********************************************
  * INPUT:

@@ -69,12 +69,12 @@ typedef struct city_clouds {
 
 typedef struct city_rain {
    float hour_1;
-   float hour_2;
+   float hour_3;
 } city_rain_s;
 
 typedef struct city_snow {
    float hour_1;
-   float hour_2;
+   float hour_3;
 } city_snow_s;
 
 typedef struct city_sys {

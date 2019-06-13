@@ -238,11 +238,11 @@ static bool jsonRain(json_object *jb, city_map_s *map) {
    bool ok = true;
    printf("Rain:\n");
    json_object_object_foreach(jb, key, val) {
-      if (strncmp(key, "1hour", sizeof("1hour")) == 0) {
+      if (strncmp(key, "1h", sizeof("1h")) == 0) {
          map->rain.hour_1 = (float)json_object_get_double(val);
          printf("\thour_1: %f\n", map->rain.hour_1);
-      } else if (strncmp(key, "2hour", sizeof("2hour")) == 0) {
-         map->rain.hour_2 = (float)json_object_get_double(val);
+      } else if (strncmp(key, "3h", sizeof("3h")) == 0) {
+         map->rain.hour_3 = (float)json_object_get_double(val);
          printf("\thour_1: %f\n", map->rain.hour_1);
       } else {
          ok = false;
@@ -274,8 +274,8 @@ static bool jsonSnow(json_object *jb, city_map_s *map) {
          map->snow.hour_1 = (float)json_object_get_double(val);
          printf("\thour_1: %f\n", map->snow.hour_1);
       } else if (strncmp(key, "2hour", sizeof("2hour")) == 0) {
-         map->snow.hour_2 = (float)json_object_get_double(val);
-         printf("\thour_2: %f\n", map->snow.hour_2);
+         map->snow.hour_3 = (float)json_object_get_double(val);
+         printf("\thour_3: %f\n", map->snow.hour_3);
       } else {
          ok = false;
          printf("\tUnknown key: %s\n", key);

@@ -24,7 +24,7 @@
 static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
    size_t realsize = size * nmemb;
    ftp_info_s *info = (ftp_info_s *)userp;
-   char *ptr = realloc(info->data, info->size + realsize + 1);
+   char *const ptr = realloc(info->data, info->size + realsize + 1);
 
    if (NULL != ptr) {
       info->data = ptr;
@@ -40,7 +40,7 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
 }
 
 /* See ftp.h for description */
-bool ftpGet(ftp_info_s *ftp, char *url) {
+bool ftpGet(ftp_info_s *const ftp, const char *const url) {
    CURL *curl_handle = NULL;
    CURLcode result = CURLE_FAILED_INIT;
 

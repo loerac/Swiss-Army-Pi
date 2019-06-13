@@ -22,7 +22,7 @@ typedef struct ftp_info {
  *
  *    **USER IS RESPONSIBLE ON FREEING MEMORY**
  **/
-bool ftpGet(ftp_info_s *ftp, char *url);
+bool ftpGet(ftp_info_s *const ftp, const char *const url);
 
 // TODO: Implement a FTP Push
 //bool ftpPush(ftp_info_s **ftp, const char *const url);

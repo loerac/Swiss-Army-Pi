@@ -3,7 +3,6 @@
 
 #include "ftp.h"
 #include "city.h"
-#include "city_ftp.h"
 #include "city_parse.h"
 #include "city_types.h"
 #include "city_custom.h"

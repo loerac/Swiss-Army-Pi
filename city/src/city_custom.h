@@ -2,7 +2,6 @@
 #define _CITY_FILE_H_
 
 #include "slist.h"
-#include "city_list.h"
 #include "city_types.h"
 
 #include <stdbool.h>

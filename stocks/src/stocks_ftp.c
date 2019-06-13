@@ -8,8 +8,8 @@
 #include <string.h>
 #include <curl/curl.h>
 
-static char url_str[512U] = {0};
-static stock_info_s info = {0};
+//static char url_str[512U] = {0};
+//static stock_info_s info = {0};
 
 /**
  * INPUT:
@@ -26,7 +26,7 @@ static stock_info_s info = {0};
  *
  *    Callback function from cURL:
  *       https://curl.haxx.se/libcurl/c/getinmemory.html
- **/
+ ** /
 static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *userp) {
    size_t realsize = size * nmemb;
    stock_info_s *tmp = (stock_info_s *)userp;
@@ -44,7 +44,7 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
    return realsize;
 }
 
-/**
+/ **
  * INPUT:
  *    url - Alpha Vantage URL information
  * RETURN:
@@ -52,7 +52,7 @@ static size_t writeCallback(void *contents, size_t size, size_t nmemb, void *use
  *    Else false
  * DESCRIPTION:
  *    Configures the Alpha Vantage API URL
- **/
+ ** /
 static bool urlConfiguration( void ) {
    bool ok = true;
    static slist_s *equity = NULL;
@@ -107,10 +107,10 @@ bool stockEquityURL( void ) {
    // Initialize cURL
    curl_global_init(CURL_GLOBAL_ALL);
 
-   /*
+   / *
     * Configure the URL with the main API URL,
     * function type, symbol, outputsize, and key.
-    */
+    * /
    while (urlConfiguration()) {
       // TODO: Figure out how to do this, all stock equity
       curl_handle = curl_easy_init();
@@ -141,3 +141,4 @@ void destroyEquity( void ) {
    info.data = NULL;
    info.size = 0;
 }
+*/

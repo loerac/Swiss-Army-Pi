@@ -1,5 +1,5 @@
 {
   "url":"https://api.openweathermap.org/data/2.5/weather?",
   "key":"invalid_key",
-	"time_interval":3600
+  "time_interval":3600
 }

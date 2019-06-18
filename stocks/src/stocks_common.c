@@ -33,7 +33,7 @@ const char *tsFunction_itos(time_series_function_e function) {
    const char *retval = NULL;
    switch (function) {
       case TIME_SERIES_INTRADAY :
-         retval = "TIME_SERIES_INTRADAY ";
+         retval = "TIME_SERIES_INTRADAY";
          break;
       case TIME_SERIES_DAILY:
          retval = "TIME_SERIES_DAILY";

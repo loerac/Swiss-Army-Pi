@@ -3,6 +3,7 @@
 #include "net_api.h"
 #include "stocks_ftp.h"
 #include "type_compat.h"
+#include "stocks_parser.h"
 #include "stocks_custom.h"
 
 #include <stdio.h>
@@ -86,7 +87,7 @@ int main(int argc, char *argv[]) {
       status = STOCK_URL_API_INVALID;
    } else if (netInit() && internetAvail()) {
       while (urlConfiguration()) {
-         printf("ftp.data: %s\n", ftp.data);
+         stocksParser(ftp);
       }
    }
 

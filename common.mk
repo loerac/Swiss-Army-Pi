@@ -47,8 +47,8 @@ install:
 
 .PHONY: install_data
 install_data:
-	$(CP) -t $(TARGET_CUST) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CUST))
-	$(CP) -t $(TARGET_CONF) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CONF))
+	-$(CP) -t $(TARGET_CUST) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CUST))
+	-$(CP) -t $(TARGET_CONF) -a $(addprefix $(OUTPUT_DATA)/,$(TARGET_DATA_CONF))
 	@echo
 
 .PHONY: uninstall

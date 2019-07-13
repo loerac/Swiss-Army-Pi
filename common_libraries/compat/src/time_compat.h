@@ -23,4 +23,16 @@ ssize_t unixTimestampConvert( const time_t unix_timestamp,
                               char *timestamp,
                               const size_t ts_length);
 
+/**
+ * INPUT:
+ *    format - Gets the timestamp in a specific format
+ * RETURN:
+ *    Returns the timestamp in a string
+ * DESCRIPTION:
+ *    See RETURN for description
+ *
+ *    ** USER IS RESPONSIBLE FOR FREEING MEMORY **
+ **/
+char *getStringTimestamp(const char *const format);
+
 #endif /* _TIME_COMPAT_H_ */

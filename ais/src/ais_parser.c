@@ -41,9 +41,9 @@ bool nasaConf( void ) {
             } else {
                printf("NOTICE: Getting '%s' information failed - %m\n", path);
             }
-         } else if (0 == strncmp(key, "use_hdurl", sizeof("use_hdurl"))) {
-            nasa.use_hdurl = json_object_get_boolean(val);
-            printf("Use HD URL: '%s'\n", nasa.use_hdurl ? "TRUE":"FALSE");
+         } else if (0 == strncmp(key, "use_hd", sizeof("use_hd"))) {
+            nasa.use_hd = json_object_get_boolean(val);
+            printf("Use HD URL: '%s'\n", nasa.use_hd ? "TRUE":"FALSE");
          } else if (0 == strncmp(key, "key", sizeof("key"))) {
             istrncpy(nasa.key, json_object_get_string(val), sizeof(nasa.key));
             printf("NASA API key '%s'\n", nasa.key);
@@ -55,6 +55,21 @@ bool nasaConf( void ) {
    } else {
       ok = false;
       printf("NOTICE: Reading JSON '%s' failed - %m\n", NASA_OPERATION);
+   }
+
+   return ok;
+}
+
+static bool nasaGetPicture(const char *const url) {
+   bool ok = false;;
+   char save[(PATH_MAX * 2) + 1U] = {0};
+   isnprintf(save, sizeof(save), "%s%s.jpg", nasa.save_location, getStringTimestamp("%Y%m%dT%H%M%S"));
+
+   ok = ftpDownloadImage(url, save);
+   if (!ok) {
+      printf("Saving image failed\n");
+   } else {
+      printf("URL = %s\n", url);
    }
 
    return ok;
@@ -76,8 +91,8 @@ bool nasaParser(ftp_info_s ftp) {
          } else if (0 == strncmp(key, "explanation", sizeof("explanation"))) {
             printf("explanation = %s\n", json_object_get_string(val));
          } else if (0 == strncmp(key, "hdurl", sizeof("hdurl"))) {
-            if (nasa.use_hdurl) {
-               printf("hdurl = %s\n", json_object_get_string(val));
+            if (nasa.use_hd) {
+               ok = nasaGetPicture(json_object_get_string(val));
             }
          } else if (0 == strncmp(key, "media_type", sizeof("media_type"))) {
             printf("media_type = %s\n", json_object_get_string(val));
@@ -86,12 +101,15 @@ bool nasaParser(ftp_info_s ftp) {
          } else if (0 == strncmp(key, "title", sizeof("title"))) {
             printf("title = %s\n", json_object_get_string(val));
          } else if (0 == strncmp(key, "url", sizeof("url"))) {
-            if (!nasa.use_hdurl) {
-               printf("url = %s\n", json_object_get_string(val));
+            if (nasa.use_hd) {
+               ok = nasaGetPicture(json_object_get_string(val));
             }
          } else {
             printf("Unknown key: %s\n", key);
             ok = false;
+         }
+
+         if (!ok) {
             break;
          }
       }

@@ -11,7 +11,7 @@
 typedef struct nasa_operation {
    char save_location[PATH_MAX + 1U];
    char key[MAX_KEY_LENGTH + 1U];
-   bool use_hdurl;
+   bool use_hd;
 } nasa_operation_s;
 
 typedef struct nasa_apod {

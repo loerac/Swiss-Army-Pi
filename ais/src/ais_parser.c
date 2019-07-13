@@ -1,5 +1,6 @@
 #include "ais_parser.h"
 #include "type_compat.h"
+#include "time_compat.h"
 
 #include <errno.h>
 #include <stdio.h>
@@ -109,7 +110,12 @@ bool issParser(ftp_info_s ftp) {
             printf("message = %s\n", json_object_get_string(val));
          } else if (0 == strncmp(key, "timestamp", sizeof("timestamp"))) {
             iss.timestamp = (unsigned)json_object_get_int64(val);
-            printf("timestamp = %lu\n", iss.timestamp);
+            char timestamp[100] = {0};
+            if (-1 == unixTimestampConvert(iss.timestamp, "%H:%M %a, %B %d", timestamp, sizeof(timestamp))) {
+               ok = false;
+               break;
+            }
+            printf("timestamp = %lu | %s\n", iss.timestamp, timestamp);
          } else if (0 == strncmp(key, "iss_position", sizeof("iss_position"))) {
             json_object *new_obj = json_object_object_get(obj, key);
             ok = issParserPosition(new_obj);

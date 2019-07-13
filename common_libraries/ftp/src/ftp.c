@@ -71,6 +71,57 @@ bool ftpGet(ftp_info_s *const ftp, const char *const url) {
    return (CURLE_OK == result);
 }
 
+bool ftpDownloadImage(const char *const url, const char *const save_location) {
+   bool ok = false;
+   FILE *fp = NULL;
+   CURL *curl_handle = NULL;
+   CURLcode result = CURLE_FAILED_INIT;
+
+   if ('\0' == url[0]) {
+      printf("NOTICE: Missing URL\n");
+   } else if ('\0' == save_location[0]) {
+      printf("NOTICE: Missing location to save image\n");
+   } else {
+      ok = true;
+   }
+
+   if ( ok ) {
+      // Initialize cURL
+      curl_global_init(CURL_GLOBAL_ALL);
+      curl_handle = curl_easy_init();
+      if (NULL == curl_handle) {
+         printf("NOTICE: Failed to initialize cURL\n");
+         ok = false;
+      }
+   }
+
+   if ( ok ) {
+      fp = fopen(save_location, "wb");
+      if (NULL == fp) {
+         printf("NOTICE: Opening '%s' failed - %m\n", save_location);
+         ok = false;
+      }
+   }
+
+   if ( ok ) {
+      curl_easy_setopt(curl_handle, CURLOPT_URL, url);
+      curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, NULL);
+      curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, fp);
+
+      result = curl_easy_perform(curl_handle);
+      if (CURLE_OK != result) {
+         printf("ERR: curl_easy_perform(%s)\n", curl_easy_strerror(result));
+         ok = false;
+      }
+      fclose(fp);
+   }
+
+   curl_easy_cleanup(curl_handle);
+   curl_global_cleanup();
+
+   return ok;
+}
+
 /* See ftp.h for description */
 void ftpDestroyInfo(ftp_info_s *ftp) {
    if ('\0' != ftp->data[0]) {

@@ -6,7 +6,7 @@ export all_dirs = common_libraries ais city stocks
 # Directories
 export SAP	= /SAP
 export CUST	= $(SAP)/custom
-export CONF	= $(SAP)/conf
+export CONF	= $(SAP)/config
 export AIS_CONF = $(CONF)/ais
 export CITY_CUST = $(CUST)/city
 export CITY_CONF = $(CONF)/city

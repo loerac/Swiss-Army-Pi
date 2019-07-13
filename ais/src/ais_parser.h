@@ -6,10 +6,20 @@
 #include <stdbool.h>
 #include <linux/limits.h>
 
-typedef struct nis_operation {
-   int time_interval;
+#define MAX_KEY_LENGTH 40U
+
+typedef struct nasa_operation {
    char save_location[PATH_MAX + 1U];
+   char key[MAX_KEY_LENGTH + 1U];
+   bool use_hdurl;
 } nasa_operation_s;
+
+typedef struct nasa_apod {
+   unsigned long timestamp;
+   char *explanation;
+   char *url;
+   char *title;
+} nasa_apod_s;
 
 typedef struct iss_now {
    float lat;
@@ -27,6 +37,28 @@ typedef struct iss_now {
  *    Parses the NASA Operation file
  **/
 bool nasaConf( void );
+
+/**
+ * RETURN:
+ *    The API key to access NASA's API
+ *
+ * DESCRIPTION:
+ *    See RETURN for description
+ **/
+char *nasaGetKey( void );
+
+/**
+ * INPUT:
+ *    ftp - holds the content of the retrieve JSON file
+ *
+ * RETURN:
+ *    True if the JSON file is valid
+ *    Else, false
+ *
+ * DESCRIPTION:
+ *    Parses the NASA Astronomy Picture Of the Day API
+ **/
+bool nasaParser(ftp_info_s ftp);
 
 /**
  * INPUT:

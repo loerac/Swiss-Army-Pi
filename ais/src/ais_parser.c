@@ -15,7 +15,7 @@
 #define LATITUDE  85
 #define TO_NEGATIVE(val)   0 - val
 
-#define NASA_OPERATION "/SAP/conf/ais/nasa_operation.json"
+#define NASA_OPERATION "/SAP/config/ais/nasa_operation.json"
 
 static iss_now_s iss = {0};
 static nasa_operation_s nasa = {0};
@@ -41,6 +41,12 @@ bool nasaConf( void ) {
             } else {
                printf("NOTICE: Getting '%s' information failed - %m\n", path);
             }
+         } else if (0 == strncmp(key, "use_hdurl", sizeof("use_hdurl"))) {
+            nasa.use_hdurl = json_object_get_boolean(val);
+            printf("Use HD URL: '%s'\n", nasa.use_hdurl ? "TRUE":"FALSE");
+         } else if (0 == strncmp(key, "key", sizeof("key"))) {
+            istrncpy(nasa.key, json_object_get_string(val), sizeof(nasa.key));
+            printf("NASA API key '%s'\n", nasa.key);
          } else {
             ok = false;
             printf("NOTICE: Unknown key: %s\n", key);
@@ -49,6 +55,46 @@ bool nasaConf( void ) {
    } else {
       ok = false;
       printf("NOTICE: Reading JSON '%s' failed - %m\n", NASA_OPERATION);
+   }
+
+   return ok;
+}
+
+/* See iss_parser.h for description */
+bool nasaParser(ftp_info_s ftp) {
+   bool ok = true;
+
+   if (  (!ftp.valid) || (ftp.data == NULL) ) {
+      printf("NOTICE: No data available\n");
+   } else {
+      json_object *obj = json_tokener_parse(ftp.data);
+      json_object_object_foreach(obj, key, val) {
+         if (0 == strncmp(key, "copyright", sizeof("copyright"))) {
+            printf("copyright = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "date", sizeof("date"))) {
+            printf("date = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "explanation", sizeof("explanation"))) {
+            printf("explanation = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "hdurl", sizeof("hdurl"))) {
+            if (nasa.use_hdurl) {
+               printf("hdurl = %s\n", json_object_get_string(val));
+            }
+         } else if (0 == strncmp(key, "media_type", sizeof("media_type"))) {
+            printf("media_type = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "service_version", sizeof("service_version"))) {
+            printf("service_version = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "title", sizeof("title"))) {
+            printf("title = %s\n", json_object_get_string(val));
+         } else if (0 == strncmp(key, "url", sizeof("url"))) {
+            if (!nasa.use_hdurl) {
+               printf("url = %s\n", json_object_get_string(val));
+            }
+         } else {
+            printf("Unknown key: %s\n", key);
+            ok = false;
+            break;
+         }
+      }
    }
 
    return ok;
@@ -119,6 +165,7 @@ bool issParser(ftp_info_s ftp) {
          } else if (0 == strncmp(key, "iss_position", sizeof("iss_position"))) {
             json_object *new_obj = json_object_object_get(obj, key);
             ok = issParserPosition(new_obj);
+            printf("\n");
          } else {
             ok = false;
             break;
@@ -129,3 +176,7 @@ bool issParser(ftp_info_s ftp) {
    return ok;
 }
 
+/* See iss_parser.h for description */
+char *nasaGetKey( void ) {
+   return nasa.key;
+}

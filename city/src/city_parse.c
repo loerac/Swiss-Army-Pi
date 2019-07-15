@@ -300,6 +300,7 @@ static bool jsonSnow(json_object *jb, city_map_s *map) {
  **********************************************/
 static bool jsonSys(json_object *jb, city_map_s *map) {
    bool ok = true;
+   printf("System:\n");
    json_object_object_foreach(jb, key, val) {
       if (strncmp(key, "type", sizeof("type")) == 0) {
          map->sys.type = json_object_get_int(val);

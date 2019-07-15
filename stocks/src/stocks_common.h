@@ -4,32 +4,32 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-typedef enum time_series_function {
-   TIME_SERIES_INTRADAY = 0,
-   TIME_SERIES_DAILY,
-   TIME_SERIES_DAILY_ADJUSTED,
-   TIME_SERIES_WEEKLY,
-   TIME_SERIES_WEEKLY_ADJUSTED,
-   TIME_SERIES_MONTHLY,
-   TIME_SERIES_MONTHLY_ADJUSTED,
-   TIME_SERIES_GLOBAL_QUOTE,
+typedef enum ts_function {
+   TS_INTRADAY = 0,
+   TS_DAILY,
+   TS_DAILY_ADJUSTED,
+   TS_WEEKLY,
+   TS_WEEKLY_ADJUSTED,
+   TS_MONTHLY,
+   TS_MONTHLY_ADJUSTED,
+   TS_GLOBAL_QUOTE,
    MAX_TIME_SERIES_FUNCTION
-} time_series_function_e;
+} ts_function_e;
 
-typedef enum time_series_interval {
-   TIME_SERIES_1_MINUTE = 0,
-   TIME_SERIES_5_MINUTE,
-   TIME_SERIES_15_MINUTE,
-   TIME_SERIES_30_MINUTE,
-   TIME_SERIES_60_MINUTE,
+typedef enum ts_interval {
+   TS_1_MINUTE = 0,
+   TS_5_MINUTE,
+   TS_15_MINUTE,
+   TS_30_MINUTE,
+   TS_60_MINUTE,
    MAX_TIME_SERIES_INTERVAL
-} time_series_interval_e;
+} ts_interval_e;
 
-typedef enum time_series_opsize {
-   TIME_SERIES_COMPACT = 0,
-   TIME_SERIES_FULL,
+typedef enum ts_opsize {
+   TS_COMPACT = 0,
+   TS_FULL,
    MAX_TIME_SERIES_OPSIZE
-} time_series_opsize_e;
+} ts_opsize_e;
 
 /**
  * INPUT:
@@ -42,7 +42,7 @@ typedef enum time_series_opsize {
  *    Converts a time series function string format to
  *    a integer format
  **/
-time_series_function_e tsFunction_stoi(const char *const function, const size_t function_len);
+ts_function_e tsFunction_stoi(const char *const function, const size_t function_len);
 
 /**
  * INPUT:
@@ -54,7 +54,7 @@ time_series_function_e tsFunction_stoi(const char *const function, const size_t 
  *    Converts a time series function integer format to
  *    a string format
  **/
-const char *tsFunction_itos(time_series_function_e function);
+const char *tsFunction_itos(ts_function_e function);
 
 /**
  * INPUT:
@@ -67,7 +67,7 @@ const char *tsFunction_itos(time_series_function_e function);
  *    Converts a time series interval string format to
  *    a integer format
  **/
-time_series_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len);
+ts_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len);
 
 /**
  * INPUT:
@@ -79,7 +79,7 @@ time_series_interval_e tsInterval_stoi(const char *const interval, const size_t 
  *    Converts a time series interval integer format to
  *    a string format
  **/
-const char *tsInterval_itos(time_series_interval_e interval);
+const char *tsInterval_itos(ts_interval_e interval);
 
 /**
  * INPUT:

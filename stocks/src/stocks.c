@@ -1,7 +1,6 @@
 #include "ftp.h"
 #include "stocks.h"
 #include "net_api.h"
-#include "stocks_ftp.h"
 #include "type_compat.h"
 #include "stocks_custom.h"
 
@@ -28,7 +27,7 @@ bool urlConfiguration( void ) {
    if (NULL != equity) {
       const time_series_s *ts = (time_series_s *)equity->data;
 
-      if (TIME_SERIES_INTRADAY == ts->function) {
+      if (TS_INTRADAY == ts->function) {
          if (MAX_TIME_SERIES_INTERVAL != ts->interval) {
             isnprintf(url_str, sizeof(url_str), "%sfunction=%s&symbol=%s&interval=%s&outputsize=%s&apikey=%s",
                getAPIURL(),
@@ -64,21 +63,6 @@ bool urlConfiguration( void ) {
 }
 
 int main(int argc, char *argv[]) {
-   /*
-   * TODO: The start-up needs to be done
-   * 1.) Read JSON stock exchange file
-   *  a.) Store the file in a struct
-   *  b.) The struct will need:
-   *     - function: time series
-   *     - symbol: name of equity
-   *     - interval: time interval
-   * 2.) Read JSON user API URL and key file
-   *  a.) Store the API usage in a struct
-   *  b.) The struct will need:
-   *     - API URL
-   *     - API key
-   * 3.) Connect to the API and parse
-   */
    stock_init_status_e status = STOCK_OK;
    if (!stock_custom()) {
       status = STOCK_CUSTOM_INVALID;

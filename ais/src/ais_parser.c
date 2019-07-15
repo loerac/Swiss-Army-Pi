@@ -151,8 +151,7 @@ bool nasaParser(ftp_info_s ftp) {
  *    Parse the position of the station
  **/
 static bool issParserPosition(json_object *obj) {
-   int retval = 0;
-
+   bool ok = true;
    printf("Location = ");
    json_object_object_foreach(obj, key, val) {
       if (0 == strncmp(key, "latitude", sizeof("latitude"))) {
@@ -161,7 +160,7 @@ static bool issParserPosition(json_object *obj) {
             iss.lat = lat;
             printf("LATITUDE(%f) ", iss.lat);
          } else {
-            retval |= 1;
+            ok = false;
             printf("NOTICE: Invalid latitude value - (%f)\n", lat);
          }
       } else if (0 == strncmp(key, "longitude", sizeof("longitude"))) {
@@ -170,16 +169,16 @@ static bool issParserPosition(json_object *obj) {
             iss.lon = lon;
             printf("LONGITUDE(%f) ", iss.lon);
          } else {
-            retval |= 2;
+            ok = false;
             printf("NOTICE: Invalid longitude value - (%f)\n", lon);
          }
       } else {
          // Invalid item found in JSON file
-         retval |= 4;
+         ok = false;
       }
    }
 
-   return (0 == retval);
+   return ok;
 }
 
 /* See iss_parser.h for description */

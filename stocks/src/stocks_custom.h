@@ -24,8 +24,8 @@ typedef struct stocks_operation {
 } stocks_operation_s;
 
 typedef struct time_series {
-   time_series_function_e function;
-   time_series_interval_e interval;
+   ts_function_e function;
+   ts_interval_e interval;
    bool is_compact;
    char symbol[MAX_TICKER_SYMBOL_LEN + 1U];
 } time_series_s;

@@ -30,7 +30,7 @@ static unsigned int total_equities = 0;
  * DESCRIPTION:
  *    Adds a new equity to the list
  **/
-static void addEquityStock(const time_series_function_e func, const time_series_interval_e interval,
+static void addEquityStock(const ts_function_e func, const ts_interval_e interval,
                            const bool is_compact, const char *const symbol) {
    if (MAX_STOCK_EQUITIES == total_equities) {
       printf("NOTICE: Reached limit of stock equites, cannot add anymore\n");
@@ -65,8 +65,8 @@ static bool parseStockTimeSeries(json_object *obj) {
    bool ok = true;
    const char *symbol = NULL;
    bool is_compact = true;
-   time_series_function_e function = MAX_TIME_SERIES_FUNCTION;
-   time_series_interval_e interval = MAX_TIME_SERIES_INTERVAL;
+   ts_function_e function = MAX_TIME_SERIES_FUNCTION;
+   ts_interval_e interval = MAX_TIME_SERIES_INTERVAL;
 
    printf("STOCK TIME SERIES:\n");
    json_object_object_foreach(obj, key, val) {
@@ -117,6 +117,11 @@ static bool parseStockTimeSeries(json_object *obj) {
 static bool parseForeignExchange(json_object *obj) {
    bool ok = true;
 
+   /*
+    * NOTE: This is something that can be made but not
+    * used to determine stocks. This can be pushed back
+    * as an update later on.
+    */
    /* TODO: Create common converter for the foreign exchange * /
    printf("FOREIGN EXCHANGE:\n");
    json_object_object_foreach(obj, key, val) {

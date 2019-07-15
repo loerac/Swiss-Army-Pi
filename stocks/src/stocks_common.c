@@ -3,24 +3,24 @@
 #include <string.h>
 
 /* See stocks_common.h for description */
-time_series_function_e tsFunction_stoi(const char *const function, const size_t function_len) {
-   time_series_function_e retval = MAX_TIME_SERIES_FUNCTION;
+ts_function_e tsFunction_stoi(const char *const function, const size_t function_len) {
+   ts_function_e retval = MAX_TIME_SERIES_FUNCTION;
    if (0 == strncmp(function, "TIME_SERIES_INTRADAY", function_len)) {
-      retval = TIME_SERIES_INTRADAY;
+      retval = TS_INTRADAY;
    } else if (0 == strncmp(function, "TIME_SERIES_DAILY", function_len)) {
-      retval = TIME_SERIES_DAILY;
+      retval = TS_DAILY;
    } else if (0 == strncmp(function, "TIME_SERIES_DAILY_ADJUSTED", function_len)) {
-      retval = TIME_SERIES_DAILY_ADJUSTED;
+      retval = TS_DAILY_ADJUSTED;
    } else if (0 == strncmp(function, "TIME_SERIES_WEEKLY", function_len)) {
-      retval = TIME_SERIES_WEEKLY;
+      retval = TS_WEEKLY;
    } else if (0 == strncmp(function, "TIME_SERIES_WEEKLY_ADJUSTED", function_len)) {
-      retval = TIME_SERIES_WEEKLY_ADJUSTED;
+      retval = TS_WEEKLY_ADJUSTED;
    } else if (0 == strncmp(function, "TIME_SERIES_MONTHLY", function_len)) {
-      retval = TIME_SERIES_MONTHLY;
+      retval = TS_MONTHLY;
    } else if (0 == strncmp(function, "TIME_SERIES_MONTHLY_ADJUSTED", function_len)) {
-      retval = TIME_SERIES_MONTHLY_ADJUSTED;
+      retval = TS_MONTHLY_ADJUSTED;
    } else if (0 == strncmp(function, "GLOBAL_QUOTE", function_len)) {
-      retval = TIME_SERIES_GLOBAL_QUOTE;
+      retval = TS_GLOBAL_QUOTE;
    } else {
       // Intentional empty statement
    }
@@ -29,31 +29,31 @@ time_series_function_e tsFunction_stoi(const char *const function, const size_t 
 }
 
 /* See stocks_common.h for description */
-const char *tsFunction_itos(time_series_function_e function) {
+const char *tsFunction_itos(ts_function_e function) {
    const char *retval = NULL;
    switch (function) {
-      case TIME_SERIES_INTRADAY :
+      case TS_INTRADAY :
          retval = "TIME_SERIES_INTRADAY ";
          break;
-      case TIME_SERIES_DAILY:
+      case TS_DAILY:
          retval = "TIME_SERIES_DAILY";
          break;
-      case TIME_SERIES_DAILY_ADJUSTED:
+      case TS_DAILY_ADJUSTED:
          retval = "TIME_SERIES_DAILY_ADJUSTED";
          break;
-      case TIME_SERIES_WEEKLY:
+      case TS_WEEKLY:
          retval = "TIME_SERIES_WEEKLY";
          break;
-      case TIME_SERIES_WEEKLY_ADJUSTED:
+      case TS_WEEKLY_ADJUSTED:
          retval = "TIME_SERIES_WEEKLY_ADJUSTED";
          break;
-      case TIME_SERIES_MONTHLY:
+      case TS_MONTHLY:
          retval = "TIME_SERIES_MONTHLY";
          break;
-      case TIME_SERIES_MONTHLY_ADJUSTED:
+      case TS_MONTHLY_ADJUSTED:
          retval = "TIME_SERIES_MONTHLY_ADJUSTED";
          break;
-      case TIME_SERIES_GLOBAL_QUOTE:
+      case TS_GLOBAL_QUOTE:
          retval = "GLOBAL_QUOTE";
          break;
       default:
@@ -65,18 +65,18 @@ const char *tsFunction_itos(time_series_function_e function) {
 }
 
 /* See stocks_common.h for description */
-time_series_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len) {
-   time_series_interval_e retval = MAX_TIME_SERIES_INTERVAL;
+ts_interval_e tsInterval_stoi(const char *const interval, const size_t interval_len) {
+   ts_interval_e retval = MAX_TIME_SERIES_INTERVAL;
    if (0 == strncmp(interval, "1min", interval_len)) {
-      retval = TIME_SERIES_1_MINUTE;
+      retval = TS_1_MINUTE;
    } else if (0 == strncmp(interval, "5min", interval_len)) {
-      retval = TIME_SERIES_5_MINUTE;
+      retval = TS_5_MINUTE;
    } else if (0 == strncmp(interval, "15min", interval_len)) {
-      retval = TIME_SERIES_15_MINUTE;
+      retval = TS_15_MINUTE;
    } else if (0 == strncmp(interval, "30min", interval_len)) {
-      retval = TIME_SERIES_30_MINUTE;
+      retval = TS_30_MINUTE;
    } else if (0 == strncmp(interval, "60min", interval_len)) {
-      retval = TIME_SERIES_60_MINUTE;
+      retval = TS_60_MINUTE;
    } else {
       // Intentional empty statement
    }
@@ -85,22 +85,22 @@ time_series_interval_e tsInterval_stoi(const char *const interval, const size_t 
 }
 
 /* See stocks_common.h for description */
-const char *tsInterval_itos(time_series_interval_e interval) {
+const char *tsInterval_itos(ts_interval_e interval) {
    const char *retval = NULL;
    switch (interval) {
-      case TIME_SERIES_1_MINUTE:
+      case TS_1_MINUTE:
          retval = "1min";
          break;
-      case TIME_SERIES_5_MINUTE:
+      case TS_5_MINUTE:
          retval = "5min";
          break;
-      case TIME_SERIES_15_MINUTE:
+      case TS_15_MINUTE:
          retval = "15min";
          break;
-      case TIME_SERIES_30_MINUTE:
+      case TS_30_MINUTE:
          retval = "30min";
          break;
-      case TIME_SERIES_60_MINUTE:
+      case TS_60_MINUTE:
          retval = "60min";
          break;
       default:

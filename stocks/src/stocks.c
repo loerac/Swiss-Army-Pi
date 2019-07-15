@@ -27,7 +27,7 @@ bool urlConfiguration( void ) {
    if (NULL != equity) {
       const time_series_s *ts = (time_series_s *)equity->data;
 
-      if (TIME_SERIES_INTRADAY == ts->function) {
+      if (TS_INTRADAY == ts->function) {
          if (MAX_TIME_SERIES_INTERVAL != ts->interval) {
             isnprintf(url_str, sizeof(url_str), "%sfunction=%s&symbol=%s&interval=%s&outputsize=%s&apikey=%s",
                getAPIURL(),

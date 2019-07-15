@@ -19,6 +19,7 @@
 
 static iss_now_s iss = {0};
 static nasa_operation_s nasa = {0};
+static nasa_apod_s apod = {0};
 
 /* See iss_parser.h for description */
 bool nasaConf( void ) {
@@ -60,16 +61,32 @@ bool nasaConf( void ) {
    return ok;
 }
 
+/*
 static bool nasaGetPicture(const char *const url) {
    bool ok = false;;
    char save[(PATH_MAX * 2) + 1U] = {0};
-   isnprintf(save, sizeof(save), "%s%s.jpg", nasa.save_location, getStringTimestamp("%Y%m%dT%H%M%S"));
+   isnprintf(save, sizeof(save), "%s%s.jpg", nasa.save_location, getStringTimestamp("%Y%m%d_%H%M%S"));
 
    ok = ftpDownloadImage(url, save);
    if (!ok) {
       printf("Saving image failed\n");
    } else {
       printf("URL = %s\n", url);
+   }
+
+   return ok;
+}
+*/
+
+static bool nasaStoreInfo(const char *const buff, size_t buff_len, char **info) {
+   bool ok = false;
+
+   (*info) = malloc(sizeof(char*) * buff_len);
+   if (NULL != info) {
+      ok = true;
+      isnprintf((*info), buff_len, "%s%c", buff, '\0');
+   } else {
+      printf("EMERG: Allocating memory failed - %m\n");
    }
 
    return ok;
@@ -84,26 +101,30 @@ bool nasaParser(ftp_info_s ftp) {
    } else {
       json_object *obj = json_tokener_parse(ftp.data);
       json_object_object_foreach(obj, key, val) {
-         if (0 == strncmp(key, "copyright", sizeof("copyright"))) {
-            printf("copyright = %s\n", json_object_get_string(val));
-         } else if (0 == strncmp(key, "date", sizeof("date"))) {
-            printf("date = %s\n", json_object_get_string(val));
+         if (0 == strncmp(key, "date", sizeof("date"))) {
+            istrncpy(apod.date, json_object_get_string(val), sizeof(apod.date));
          } else if (0 == strncmp(key, "explanation", sizeof("explanation"))) {
-            printf("explanation = %s\n", json_object_get_string(val));
+            ok = nasaStoreInfo(  json_object_get_string(val),
+                                 strlen(json_object_get_string(val)) + 1U,
+                                 &apod.explanation);
          } else if (0 == strncmp(key, "hdurl", sizeof("hdurl"))) {
-            if (nasa.use_hd) {
-               ok = nasaGetPicture(json_object_get_string(val));
-            }
-         } else if (0 == strncmp(key, "media_type", sizeof("media_type"))) {
-            printf("media_type = %s\n", json_object_get_string(val));
-         } else if (0 == strncmp(key, "service_version", sizeof("service_version"))) {
-            printf("service_version = %s\n", json_object_get_string(val));
-         } else if (0 == strncmp(key, "title", sizeof("title"))) {
-            printf("title = %s\n", json_object_get_string(val));
+            ok = nasaStoreInfo(  json_object_get_string(val),
+                                 strlen(json_object_get_string(val)) + 1U,
+                                 &apod.hdurl);
          } else if (0 == strncmp(key, "url", sizeof("url"))) {
-            if (nasa.use_hd) {
-               ok = nasaGetPicture(json_object_get_string(val));
-            }
+            ok = nasaStoreInfo(  json_object_get_string(val),
+                                 strlen(json_object_get_string(val)) + 1U,
+                                 &apod.url);
+         } else if (0 == strncmp(key, "title", sizeof("title"))) {
+            ok = nasaStoreInfo(  json_object_get_string(val),
+                                 strlen(json_object_get_string(val)) + 1U,
+                                 &apod.title);
+         } else if (0 == strncmp(key, "copyright", sizeof("copyright"))) {
+            /* Unneeded information */
+         } else if (0 == strncmp(key, "media_type", sizeof("media_type"))) {
+            /* Unneeded information */
+         } else if (0 == strncmp(key, "service_version", sizeof("service_version"))) {
+            /* Unneeded information */
          } else {
             printf("Unknown key: %s\n", key);
             ok = false;
@@ -175,7 +196,7 @@ bool issParser(ftp_info_s ftp) {
          } else if (0 == strncmp(key, "timestamp", sizeof("timestamp"))) {
             iss.timestamp = (unsigned)json_object_get_int64(val);
             char timestamp[100] = {0};
-            if (-1 == unixTimestampConvert(iss.timestamp, "%H:%M %a, %B %d", timestamp, sizeof(timestamp))) {
+            if (-1 == timecompactUnixToDate(iss.timestamp, "%H:%M %a, %B %d", timestamp, sizeof(timestamp))) {
                ok = false;
                break;
             }

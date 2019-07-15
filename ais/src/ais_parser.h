@@ -6,7 +6,8 @@
 #include <stdbool.h>
 #include <linux/limits.h>
 
-#define MAX_KEY_LENGTH 40U
+#define MAX_KEY_LENGTH  40U
+#define MAX_DATE_LENGTH 10U
 
 typedef struct nasa_operation {
    char save_location[PATH_MAX + 1U];
@@ -15,8 +16,9 @@ typedef struct nasa_operation {
 } nasa_operation_s;
 
 typedef struct nasa_apod {
-   unsigned long timestamp;
+   char date[MAX_DATE_LENGTH + 1U]; // Format YYYY-MM-DD
    char *explanation;
+   char *hdurl;
    char *url;
    char *title;
 } nasa_apod_s;

@@ -6,9 +6,8 @@
 
 /**
  * INPUT:
- *    unix_timestamp - Unix timestamp
+ *    unix_ts - Unix timestamp
  *    format - Convert 'unix_timestamp' into specific format
- *    timestamp - Buffer for converted Unix timestamp
  *    ts_length - Buffer length of 'timestamp'
  * OUTPUT:
  *    timestamp - Holds the converted Unix timestamp on success,
@@ -18,7 +17,7 @@
  * DESCRIPTION:
  *    Convert an Unix timestamp to a specific format
  **/
-ssize_t unixTimestampConvert( const time_t unix_timestamp,
+ssize_t timecompactUnixToDate(const time_t unix_ts,
                               const char *const format,
                               char *timestamp,
                               const size_t ts_length);
@@ -33,6 +32,6 @@ ssize_t unixTimestampConvert( const time_t unix_timestamp,
  *
  *    ** USER IS RESPONSIBLE FOR FREEING MEMORY **
  **/
-char *getStringTimestamp(const char *const format);
+char *timecompactStringTimestamp(const char *const format);
 
 #endif /* _TIME_COMPAT_H_ */

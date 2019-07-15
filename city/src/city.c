@@ -10,7 +10,7 @@
 #include "net_api.h"
 
 #define CITY_CUSTOM     "/SAP/custom/city/city.json"
-#define CITY_OPERATION  "/SAP/conf/city/city_operation.json"
+#define CITY_OPERATION  "/SAP/config/city/city_operation.json"
 
 static ftp_info_s ftp = {0};
 static city_operation_s oper = {0};

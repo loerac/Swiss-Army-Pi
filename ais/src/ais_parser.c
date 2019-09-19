@@ -35,7 +35,7 @@ bool nasaConf( void ) {
             if (0 == stat(path, &info)) {
                if (S_ISDIR(info.st_mode)) {
                   istrncpy(nasa.save_location, path, sizeof(nasa.save_location));
-                  printf("Saving images to '%s'\n", nasa.save_location);
+                  printf("NOTICE: Saving images to '%s'\n", nasa.save_location);
                } else {
                   printf("NOTICE: '%s', not a directory\n", path);
                }
@@ -61,22 +61,18 @@ bool nasaConf( void ) {
    return ok;
 }
 
-/*
 static bool nasaGetPicture(const char *const url) {
    bool ok = false;;
    char save[(PATH_MAX * 2) + 1U] = {0};
-   isnprintf(save, sizeof(save), "%s%s.jpg", nasa.save_location, getStringTimestamp("%Y%m%d_%H%M%S"));
+   isnprintf(save, sizeof(save), "%s%s.jpg", nasa.save_location, timecompactStringTimestamp("%Y%m%d"));
 
    ok = ftpDownloadImage(url, save);
    if (!ok) {
       printf("Saving image failed\n");
-   } else {
-      printf("URL = %s\n", url);
    }
 
    return ok;
 }
-*/
 
 static bool nasaStoreInfo(const char *const buff, size_t buff_len, char **info) {
    bool ok = false;
@@ -107,18 +103,22 @@ bool nasaParser(ftp_info_s ftp) {
             ok = nasaStoreInfo(  json_object_get_string(val),
                                  strlen(json_object_get_string(val)) + 1U,
                                  &apod.explanation);
+            printf("\tEXPLANATION: %s\n", apod.explanation);
          } else if (0 == strncmp(key, "hdurl", sizeof("hdurl"))) {
             ok = nasaStoreInfo(  json_object_get_string(val),
                                  strlen(json_object_get_string(val)) + 1U,
                                  &apod.hdurl);
+            printf("\tHD URL: %s\n", apod.hdurl);
          } else if (0 == strncmp(key, "url", sizeof("url"))) {
             ok = nasaStoreInfo(  json_object_get_string(val),
                                  strlen(json_object_get_string(val)) + 1U,
                                  &apod.url);
+            printf("\tURL: %s\n", apod.url);
          } else if (0 == strncmp(key, "title", sizeof("title"))) {
             ok = nasaStoreInfo(  json_object_get_string(val),
                                  strlen(json_object_get_string(val)) + 1U,
                                  &apod.title);
+            printf("\tTITLE: %s\n", apod.title);
          } else if (0 == strncmp(key, "copyright", sizeof("copyright"))) {
             /* Unneeded information */
          } else if (0 == strncmp(key, "media_type", sizeof("media_type"))) {
@@ -134,6 +134,11 @@ bool nasaParser(ftp_info_s ftp) {
             break;
          }
       }
+   }
+
+   if (ok) {
+      const char *const url = nasa.use_hd ? apod.hdurl:apod.url;
+      ok = nasaGetPicture(url);
    }
 
    return ok;

@@ -28,6 +28,17 @@ bool ftpGet(ftp_info_s *const ftp, const char *const url);
 //bool ftpPush(ftp_info_s **ftp, const char *const url);
 
 /**
+ * INPUT:
+ *    url - URL that cURL is going to get the data from
+ *    save_location - Directory where the image is being saved
+ * RETURN:
+ *    True if data retrieve ok, else false.
+ * DESCRIPTION:
+ *    Downloads and saves an image from the 'url'
+ **/
+bool ftpDownloadImage(const char *const url, const char *const save_location);
+
+/**
  * DESCRIPTION:
  *    Destroy the resceived FTP data
  **/

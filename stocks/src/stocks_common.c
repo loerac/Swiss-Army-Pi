@@ -32,8 +32,8 @@ ts_function_e tsFunction_stoi(const char *const function, const size_t function_
 const char *tsFunction_itos(ts_function_e function) {
    const char *retval = NULL;
    switch (function) {
-      case TS_INTRADAY :
-         retval = "TIME_SERIES_INTRADAY ";
+      case TS_INTRADAY:
+         retval = "TIME_SERIES_INTRADAY";
          break;
       case TS_DAILY:
          retval = "TIME_SERIES_DAILY";

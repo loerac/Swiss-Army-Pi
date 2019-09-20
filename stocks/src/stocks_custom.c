@@ -11,7 +11,7 @@
 #include <json-c/json.h>
 
 #define STOCK_LOOKUP    "/SAP/custom/stocks/stock_lookup.json"
-#define STOCK_OPERATION "/SAP/conf/stocks/stock_operation.json"
+#define STOCK_OPERATION "/SAP/config/stocks/stock_operation.json"
 
 static slist_s *equity_list = NULL;
 

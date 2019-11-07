@@ -1,7 +1,7 @@
 
 export TOPDIR=$(realpath $(shell pwd) )
 
-export all_dirs = common_libraries ais city stocks
+export all_dirs = common_libraries ais aqap city stocks
 
 # Directories
 export SAP	= /SAP
@@ -19,6 +19,7 @@ all_files = $(AIS_CONF) $(CITY_CUST) $(CITY_CONF) $(STOCK_CUST) $(STOCK_CONF)
 all: $(LIB_TARGET)
 	$(MAKE) -C common_libraries $(@F)
 	$(MAKE) -C ais $(@F)
+	$(MAKE) -C aqap $(@F)
 	$(MAKE) -C city $(@F)
 	$(MAKE) -C stocks $(@F)
 
@@ -29,6 +30,7 @@ install: $(LIB_TARGET)
 .PHONY: install_data
 install_data: $(LIB_TARGET)
 	$(MAKE) -C ais $(@F)
+	$(MAKE) -C aqap $(@F)
 	$(MAKE) -C city $(@F)
 	$(MAKE) -C stocks $(@F)
 
@@ -39,6 +41,7 @@ uninstall: $(LIB_TARGET)
 .PHONY: uninstall_data
 uninstall_data: $(LIB_TARGET)
 	$(MAKE) -C ais $(@F)
+	$(MAKE) -C aqap $(@F)
 	$(MAKE) -C city $(@F)
 	$(MAKE) -C stocks $(@F)
 

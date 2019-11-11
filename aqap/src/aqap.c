@@ -32,6 +32,12 @@ aqap_status_e aqap_init( void ) {
     }
     printf("NOTICE: AQAP Configuration VALIDATED\n");
 
+    if (!aqap_custom_init()) {
+        printf("WARNING: AQAP Customization FAILED\n");
+        return AQAP_FAILURE;
+    }
+    printf("NOTICE: AQAP Customization VALIDATED\n");
+
     if ( (!netInit()) ||
          (!internetAvail()) ) {
         printf("WARNING: Internet access FAILED\n");
@@ -64,3 +70,4 @@ int main(int argc, char *argv[]) {
 
     return aqap_sts;
 }
+

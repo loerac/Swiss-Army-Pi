@@ -11,10 +11,9 @@
  * OUTPUT:
  *    NONE
  * RETURN:
- *    True if able to parse AQAP operation file, else false
+ *    True if able to parse AQAP configuration file, else false
  * DESCRIPTION:
- *    Parses the AQAP operation file that has the aqicn key,
- *    and a list of cities to search.
+ *    Parses the AQAP configuration file
  **/
 bool aqap_config_init( void );
 
@@ -36,11 +35,12 @@ char *aqap_get_key( void );
  * OUTPUT:
  *    NONE
  * RETURN:
- *    Returns the aqicn check-in time in seconds.
+ *    Returns the aqicn check-in time in seconds,
+ *    Else -1 for error
  * DESCRIPTION:
  *    See RETURN
  **/
-aqap_get_checkin( void );
+ssize_t aqap_get_checkin( void );
 
 #endif /* _AQAP_CONFIG_H_ */
 

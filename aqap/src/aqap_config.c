@@ -10,7 +10,6 @@
 #include <json-c/json.h>
 
 #define AQAP_CONFIG    "/SAP/config/aqap_config.json"
-#define AQAP_CUSTOM    "/SAP/custom/aqap_custom.json"
 
 typedef struct aqap {
     char key[];

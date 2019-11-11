@@ -1,4 +1,3 @@
-#include "slist.h"
 #include "aqap_config.h"
 #include "type_compat.h"
 
@@ -9,13 +8,9 @@
 #include <unistd.h>
 #include <json-c/json.h>
 
-#define AQAP_CONFIG    "/SAP/config/aqap_config.json"
 #define AQAP_CUSTOM    "/SAP/custom/aqap_custom.json"
 
-typedef struct aqap {
-    char key[];
-    slist_s *cities;
-} aqap_s;
+//slist_s *cities = NULL;
 
 /**
  * INPUT:
@@ -28,7 +23,7 @@ typedef struct aqap {
  * DESCRIPTION:
  *    Iterate through the city names array
  **/
-static bool aqap_config_city(json_object *obj, const char * const key) {
+static bool aqap_custom_city(json_object *obj, const char *const key) {
    bool ok = true;
    json_object *json_array = obj;
    if (NULL != key) {
@@ -43,7 +38,7 @@ static bool aqap_config_city(json_object *obj, const char * const key) {
             json_object_object_foreach(arr_obj, arr_key, arr_val) {
                 if (0 == strncmp(arr_key, "name", sizeof("name"))) {
                     printf("%s: %s\n", arr_key, json_object_get_string(arr_val));
-                    //aqap_s.cities = slistPrepend(aqap.cities, json_object_get_string(arr_val));
+                    //cities = slistPrepend(cities, json_object_get_string(arr_val));
                 } else {
                     ok = false;
                 }
@@ -60,16 +55,14 @@ static bool aqap_config_city(json_object *obj, const char * const key) {
 }
 
 /* See aqicn_config.h for description */
-bool aqap_config_init( void ) {
+bool aqap_custom_init( void ) {
    bool ok = true;
 
-   json_object *obj = json_object_from_file(AQICN_CONFIG);
+   json_object *obj = json_object_from_file(AQAP_CUSTOM);
    if (NULL != obj) {
       json_object_object_foreach(obj, key, val) {
-         if (0 == strncmp(key, "key", sizeof("key"))) {
-            printf("%s: %s", key, json_object_get_string(val));
-         } else if (0 == strncmp(key, "city", sizeof("city"))) {
-            ok = aqap_config_city(obj, key);
+         if (0 == strncmp(key, "city", sizeof("city"))) {
+            ok = aqap_custom_city(obj, key);
          } else {
             ok = false;
             printf("NOTICE: Unknown key: %s\n", key);
@@ -84,12 +77,7 @@ bool aqap_config_init( void ) {
 }
 
 /* See aqicn_config.h for description */
-char *aqap_get_key( void ) {
-    return aqap_s.key;
-}
-
-/* See aqicn_config.h for description */
-slist_s *aqap_get_list( void ) {
-    return aqap_s.cities;
+slist_s *aqap_custom_get_list( void ) {
+    return cities;
 }
 
